@@ -5,7 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 /* ─── Constants ─── */
 const NAV_LINKS  = ["about", "skills", "certificates", "projects", "coding", "education", "contact"];
 const NAV_LABEL  = {
-  about: "About", skills: "Skills", certificates: "Certifactes",
+  about: "About", skills: "Skills", certificates: "Certificates",
   projects: "Projects", coding: "{} Profiles", education: "Education", contact: "Contact",
 };
 
