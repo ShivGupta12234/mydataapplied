@@ -793,7 +793,7 @@ export default function DevPortfolio() {
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 md:px-12 py-4 transition-all duration-300 ${scrolled?"bg-black/95 backdrop-blur-md border-b border-orange-500/20 shadow-2xl shadow-orange-500/5":"bg-transparent"}`}>
         <motion.button whileHover={{ scale:1.05 }} whileTap={{ scale:0.95 }} onClick={()=>navigate("/")}
           className="flex items-center gap-2 text-orange-500 font-bold text-sm z-10" style={{ fontFamily:"'Courier New', monospace" }}>
-          <span className="text-orange-500/50 text-lg">←</span><span>&lt;MDA/&gt;</span>
+          <span className="text-orange-500/50 text-lg">←</span><span>&lt;MYDATAAPPLIED.COM/&gt;</span>
         </motion.button>
         <div className="hidden lg:flex items-center gap-1">
           {NAV_LINKS.map((section)=>(
@@ -830,7 +830,7 @@ export default function DevPortfolio() {
         className="fixed top-0 right-0 bottom-0 w-[280px] sm:w-[320px] z-50 lg:hidden bg-black/98 border-l border-orange-500/20 backdrop-blur-xl flex flex-col overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-5 border-b border-orange-500/15">
           <div style={{ fontFamily:"'Courier New', monospace" }}>
-            <p className="text-orange-500 font-bold text-sm">&lt;MDA/&gt;</p>
+            <p className="text-orange-500 font-bold text-sm">&lt;MYDATAAPPLIED.COM/&gt;</p>
             <p className="text-gray-600 text-[10px] tracking-widest mt-0.5">dev portfolio</p>
           </div>
           <motion.button whileHover={{ scale:1.1, rotate:90 }} whileTap={{ scale:0.9 }}
@@ -958,7 +958,7 @@ export default function DevPortfolio() {
 
                 {/* Navbar inside browser */}
                 <rect x="30" y="65" width="420" height="28" rx="0" fill="#f97316" fillOpacity="0.08"/>
-                <text x="48" y="83" fontSize="10" fontWeight="bold" fill="#f97316" fontFamily="monospace">&lt;MDA/&gt;</text>
+                <text x="48" y="83" fontSize="10" fontWeight="bold" fill="#f97316" fontFamily="monospace">&lt;MYDATAAPPLIED.COM/&gt;</text>
                 {["About","Skills","Projects","Contact"].map((item,i)=>(
                   <text key={item} x={190+i*58} y="83" fontSize="8" fill="#f97316" opacity="0.6" fontFamily="monospace">{item}</text>
                 ))}

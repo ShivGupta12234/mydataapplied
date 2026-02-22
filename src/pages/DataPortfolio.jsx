@@ -1026,7 +1026,7 @@ export default function DataPortfolio() {
           className="flex items-center gap-2 text-orange-500 font-bold text-sm z-10"
           style={{ fontFamily: "'Courier New', monospace" }}>
           <span className="text-orange-500/50 text-lg">←</span>
-          <span>&lt;MDA/&gt;</span>
+          <span>&lt;MYDATAAPPLIED.COM/&gt;</span>
         </motion.button>
 
         {/* Desktop nav links */}
@@ -1105,7 +1105,7 @@ export default function DataPortfolio() {
         {/* Drawer header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-orange-500/15">
           <div style={{ fontFamily: "'Courier New', monospace" }}>
-            <p className="text-orange-500 font-bold text-sm">&lt;MDA/&gt;</p>
+            <p className="text-orange-500 font-bold text-sm">&lt;MYDATAAPPLIED.COM/&gt;</p>
             <p className="text-gray-600 text-[10px] tracking-widest mt-0.5">mydataapplied.com</p>
           </div>
           <motion.button
