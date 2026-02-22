@@ -5,7 +5,7 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 /* ─── Constants ─── */
 const NAV_LINKS  = ["about", "skills", "certificates", "projects", "coding", "education", "contact"];
 const NAV_LABEL  = {
-  about: "About", skills: "Skills", certificates: "Certificates",
+  about: "About", skills: "Skills", certificates: "Certifactes",
   projects: "Projects", coding: "{} Profiles", education: "Education", contact: "Contact",
 };
 
@@ -114,7 +114,7 @@ const PROJECTS = [
     borderColor: "border-red-500/30",
     glowColor: "rgba(239,68,68,0.12)",
     accentColor: "text-red-400",
-    tech: ["React.js", "Node.js", "Express.js", "Vite", "Tailwind CSS", "HTML", "JavaScript", "SQL", "HuggingFace API integration", "Recharts", "Git/Github"],
+    tech: ["React.js", "Node.js", "Express.js", "RESTFul APIs", "Vite", "Tailwind CSS", "HTML", "JavaScript", "SQL","HuggingFace API integration", "Recharts", "Git/Github"],
     icon: "🧠",
     status: "Completed",
     statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
@@ -129,7 +129,7 @@ const PROJECTS = [
     borderColor: "border-blue-500/30",
     glowColor: "rgba(59,130,246,0.12)",
     accentColor: "text-blue-400",
-    tech: ["React.js", "Node.js", "Express.js", "Vite", "Tailwind CSS", "HTML", "JavaScript", "SQL", "HuggingFace API integration", "Recharts", "Git/Github"],
+    tech: ["React.js", "Node.js", "Express.js", "RESTFul APIs", "Vite", "Tailwind CSS", "HTML", "JavaScript", "SQL","HuggingFace API integration", "Recharts", "Git/Github"],
     icon: "📈",
     status: "Completed",
     statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
@@ -139,12 +139,12 @@ const PROJECTS = [
     title: "MyDataApplied.com",
     subtitle: "Personal Portfolio Website",
     description: "This very portfolio — a production-grade, fully responsive React application with Framer Motion animations, dark theme, multi-section navigation, contact form, and separate Data & Dev sub-portfolios.",
-    url: "https://github.com/ShivGupta12234",
+    url: "https://mydataapplied.vercel.app/",
     gradient: "from-orange-500/20 to-orange-900/10",
     borderColor: "border-orange-500/30",
     glowColor: "rgba(249,115,22,0.12)",
     accentColor: "text-orange-400",
-    tech: ["HTML", "React.js", "Tailwind CSS", "Framer Motion", "Vite", "JSX"],
+    tech: ["React.js", "Tailwind CSS", "Framer Motion", "Vite", "JSX", "HTML"],
     icon: "🌐",
     status: "Live",
     statusColor: "text-orange-400 border-orange-500/40 bg-orange-500/10",
@@ -167,17 +167,28 @@ const CODING_PROFILES = [
 /* ─── Reusable Components ─── */
 function Particles() {
   const [particles] = useState(() =>
-    Array.from({ length: 22 }, (_, i) => ({
-      id: i, x: Math.random()*100, y: Math.random()*100,
-      size: Math.random()*3+1, duration: Math.random()*8+6, delay: Math.random()*5,
-    }))
+    Array.from({ length: 36 }, (_, i) => {
+      const bright = i % 5 === 0;
+      const large  = i % 9 === 0;
+      return {
+        id: i, x: Math.random()*100, y: Math.random()*100,
+        size: large ? Math.random()*5+3 : Math.random()*2.5+1,
+        duration: Math.random()*9+5, delay: Math.random()*6,
+        bright, large, drift: (Math.random()-0.5)*30,
+      };
+    })
   );
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {particles.map((p) => (
-        <motion.div key={p.id} className="absolute rounded-full bg-orange-500/25"
-          style={{ left:`${p.x}%`, top:`${p.y}%`, width:p.size, height:p.size }}
-          animate={{ y:[0,-50,0], opacity:[0.15,0.7,0.15], scale:[1,1.6,1] }}
+        <motion.div key={p.id}
+          className={`absolute rounded-full ${p.bright?"bg-orange-400":p.large?"bg-orange-500/40":"bg-orange-500/20"}`}
+          style={{ left:`${p.x}%`, top:`${p.y}%`, width:p.size, height:p.size,
+            boxShadow: p.bright?`0 0 ${p.size*4}px rgba(249,115,22,0.6)`:p.large?`0 0 ${p.size*2}px rgba(249,115,22,0.3)`:"none" }}
+          animate={{
+            y:[0,-(40+Math.random()*60),0], x:[0,p.drift,0],
+            opacity:p.bright?[0.5,1,0.5]:[0.1,0.55,0.1], scale:[1,p.bright?2:1.6,1],
+          }}
           transition={{ duration:p.duration, delay:p.delay, repeat:Infinity, ease:"easeInOut" }}
         />
       ))}
@@ -187,25 +198,43 @@ function Particles() {
 
 function FadeIn({ children, delay=0, className="" }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once:true, margin:"-80px" });
+  const inView = useInView(ref, { once:true, margin:"-60px" });
   return (
-    <motion.div ref={ref} initial={{ opacity:0, y:50 }}
-      animate={inView ? { opacity:1, y:0 } : {}}
-      transition={{ duration:0.7, delay }} className={className}>
+    <motion.div ref={ref}
+      initial={{ opacity:0, y:40, filter:"blur(4px)" }}
+      animate={inView ? { opacity:1, y:0, filter:"blur(0px)" } : {}}
+      transition={{ duration:0.65, delay, ease:[0.22,1,0.36,1] }}
+      className={className}>
       {children}
     </motion.div>
   );
 }
 
 function SectionLabel({ comment, title }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
   return (
-    <div className="mb-12">
-      <span className="text-orange-500 text-sm tracking-[0.3em] uppercase" style={{ fontFamily:"'Courier New', monospace" }}>
-        {comment}
-      </span>
-      <h2 className="text-4xl sm:text-5xl font-bold mt-3" style={{ fontFamily:"'Courier New', monospace" }}>
-        {title}<span className="text-orange-500">.</span>
-      </h2>
+    <div className="mb-12" ref={ref}>
+      <motion.span
+        initial={{ opacity:0, x:-12 }} animate={inView ? { opacity:1, x:0 } : {}}
+        transition={{ duration:0.5, ease:"easeOut" }}
+        className="text-orange-500 text-sm tracking-[0.3em] uppercase block"
+        style={{ fontFamily:"'Courier New', monospace" }}>{comment}
+      </motion.span>
+      <div className="relative mt-3 overflow-hidden">
+        <motion.h2
+          initial={{ opacity:0, y:30 }} animate={inView ? { opacity:1, y:0 } : {}}
+          transition={{ duration:0.6, delay:0.1, ease:[0.22,1,0.36,1] }}
+          className="text-4xl sm:text-5xl font-bold" style={{ fontFamily:"'Courier New', monospace" }}>
+          {title}<span className="text-orange-500">.</span>
+        </motion.h2>
+        <motion.div
+          initial={{ scaleX:0 }} animate={inView ? { scaleX:1 } : {}}
+          transition={{ duration:0.7, delay:0.3, ease:"easeOut" }}
+          style={{ originX:0 }}
+          className="absolute bottom-0 left-0 h-[2px] w-16 bg-gradient-to-r from-orange-500 to-transparent"
+        />
+      </div>
     </div>
   );
 }
@@ -213,7 +242,7 @@ function SectionLabel({ comment, title }) {
 function SkillItem({ skill }) {
   const [err, setErr] = useState(false);
   return (
-    <motion.div whileHover={{ scale:1.12, y:-5 }}
+    <motion.div whileHover={{ scale:1.14, y:-7, boxShadow:"0 12px 40px rgba(249,115,22,0.25)" }}
       className="flex flex-col items-center gap-3 min-w-[110px] px-4 py-5
         border border-orange-500/20 bg-orange-500/5 rounded-2xl
         hover:border-orange-500/60 hover:bg-orange-500/10 transition-colors duration-300 cursor-default">
@@ -236,7 +265,7 @@ function SkillsStrip() {
       <div className="absolute right-0 top-0 h-full w-28 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
       <motion.div className="flex gap-5 w-max"
         animate={{ x:["0%","-50%"] }}
-        transition={{ duration:38, repeat:Infinity, ease:"linear" }}>
+        transition={{ duration:40, repeat:Infinity, ease:"linear" }}>
         {doubled.map((skill,idx)=><SkillItem key={`${skill.name}-${idx}`} skill={skill} />)}
       </motion.div>
     </div>
@@ -250,12 +279,12 @@ function CertCard({ cert, index }) {
     <motion.div ref={ref} initial={{ opacity:0, y:60 }}
       animate={inView ? { opacity:1, y:0 } : {}}
       transition={{ duration:0.55, delay:index*0.1 }}
-      whileHover={{ y:-8, scale:1.025 }}
+      whileHover={{ y:-10, scale:1.03, boxShadow:"0 20px 50px rgba(0,0,0,0.5)" }}
       className={`relative rounded-2xl border ${cert.borderColor} bg-gradient-to-br ${cert.gradient}
         backdrop-blur-sm p-6 flex flex-col gap-4 overflow-hidden group cursor-pointer`}
       onClick={()=>window.open(cert.link,"_blank")}>
       <motion.div className="absolute -top-4 -right-4 w-28 h-28 rounded-full bg-orange-500/10 blur-xl"
-        animate={{ scale:[1,1.3,1], opacity:[0.4,0.9,0.4] }} transition={{ duration:3.5, repeat:Infinity }} />
+        animate={{ scale:[1,1.5,1], opacity:[0.5,1,0.5] }} transition={{ duration:3, repeat:Infinity, ease:"easeInOut" }} />
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl"
         style={{ boxShadow:"inset 0 0 50px rgba(249,115,22,0.08)" }} />
       <div className="flex items-start gap-4">
@@ -293,7 +322,7 @@ function ProjectCard({ project, index }) {
       initial={{ opacity:0, y:70, scale:0.95 }}
       animate={inView ? { opacity:1, y:0, scale:1 } : {}}
       transition={{ duration:0.6, delay:index*0.13, type:"spring", stiffness:75 }}
-      whileHover={{ y:-10, scale:1.02 }}
+      whileHover={{ y:-12, scale:1.025, boxShadow:"0 24px 60px rgba(0,0,0,0.5)" }}
       className={`relative rounded-2xl border ${project.borderColor} bg-gradient-to-br ${project.gradient}
         backdrop-blur-sm p-7 flex flex-col gap-5 overflow-hidden group cursor-pointer`}
       onClick={()=>window.open(project.url,"_blank")}
@@ -301,8 +330,8 @@ function ProjectCard({ project, index }) {
       {/* Glow blob */}
       <motion.div className="absolute -top-8 -right-8 w-40 h-40 rounded-full blur-3xl pointer-events-none"
         style={{ background:project.glowColor }}
-        animate={{ scale:[1,1.5,1], opacity:[0.6,1,0.6] }}
-        transition={{ duration:4.5, repeat:Infinity, ease:"easeInOut" }} />
+        animate={{ scale:[1,1.6,1], opacity:[0.6,1,0.6] }}
+        transition={{ duration:4, repeat:Infinity, ease:"easeInOut" }} />
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
         style={{ boxShadow:`inset 0 0 60px ${project.glowColor}` }} />
 
@@ -366,14 +395,14 @@ function CodingProfileCard({ profile, index }) {
       initial={{ opacity:0, y:70, scale:0.95 }}
       animate={inView ? { opacity:1, y:0, scale:1 } : {}}
       transition={{ duration:0.6, delay:index*0.13, type:"spring", stiffness:75 }}
-      whileHover={{ y:-10, scale:1.02 }}
+      whileHover={{ y:-12, scale:1.025, boxShadow:"0 24px 60px rgba(0,0,0,0.5)" }}
       className={`relative rounded-2xl border ${profile.borderColor} bg-gradient-to-br ${profile.gradient}
         backdrop-blur-sm p-7 flex flex-col gap-5 overflow-hidden group cursor-pointer`}
       onClick={()=>window.open(profile.url,"_blank")}>
       <motion.div className="absolute -top-8 -right-8 w-40 h-40 rounded-full blur-3xl pointer-events-none"
         style={{ background:profile.glowColor }}
-        animate={{ scale:[1,1.5,1], opacity:[0.6,1,0.6] }}
-        transition={{ duration:4.5, repeat:Infinity, ease:"easeInOut" }} />
+        animate={{ scale:[1,1.6,1], opacity:[0.6,1,0.6] }}
+        transition={{ duration:4, repeat:Infinity, ease:"easeInOut" }} />
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none"
         style={{ boxShadow:`inset 0 0 60px ${profile.glowColor}` }} />
       <div className="flex items-center gap-4 relative z-10">
@@ -422,7 +451,7 @@ function EducationCard({ edu }) {
         <motion.div animate={{ scale:[1,1.6,1], opacity:[0.8,0.3,0.8] }} transition={{ duration:2.5, repeat:Infinity }}
           className={`w-2 h-2 rounded-full ${edu.dotColor}`} />
       </motion.div>
-      <motion.div whileHover={{ y:-6, scale:1.015 }}
+      <motion.div whileHover={{ y:-8, scale:1.018, boxShadow:"0 20px 50px rgba(0,0,0,0.45)" }}
         className={`relative rounded-2xl border ${edu.borderColor} bg-gradient-to-br ${edu.gradient} backdrop-blur-sm p-4 sm:p-6 md:p-8 overflow-hidden group`}>
         <motion.div className="absolute -top-6 -right-6 w-36 h-36 rounded-full blur-3xl pointer-events-none"
           style={{ background:edu.glowColor }} animate={{ scale:[1,1.4,1], opacity:[0.5,1,0.5] }} transition={{ duration:4, repeat:Infinity }} />
@@ -482,11 +511,11 @@ function ContactForm() {
       className="relative rounded-2xl border border-orange-500/20 bg-gradient-to-br from-orange-500/8 to-black/60 backdrop-blur-sm p-5 sm:p-8 flex flex-col gap-5 overflow-hidden">
       <motion.div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-orange-500/8 blur-3xl pointer-events-none"
         animate={{ scale:[1,1.3,1], opacity:[0.5,1,0.5] }} transition={{ duration:5, repeat:Infinity }} />
-      <p className="text-orange-500 text-[10px] tracking-[0.3em] uppercase relative z-10" style={{ fontFamily:"'Courier New', monospace" }}>// send a message</p>
+      <p className="text-orange-500/80 text-[10px] tracking-[0.3em] uppercase relative z-10" style={{ fontFamily:"'Courier New', monospace" }}>// send a message</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative z-10">
         {[{name:"name",label:"Name",placeholder:"Your Name",type:"text",required:true},{name:"email",label:"Email",placeholder:"you@example.com",type:"email",required:true}].map((field)=>(
           <div key={field.name} className="flex flex-col gap-1.5">
-            <label className="text-orange-500/70 text-[10px] tracking-widest uppercase" style={{ fontFamily:"'Courier New', monospace" }}>{field.label} {field.required&&<span className="text-orange-500">*</span>}</label>
+            <label className="text-orange-500/80 text-[10px] tracking-widest uppercase" style={{ fontFamily:"'Courier New', monospace" }}>{field.label} {field.required&&<span className="text-orange-500/80">*</span>}</label>
             <motion.input whileFocus={{ scale:1.01 }} type={field.type} name={field.name} value={form[field.name]} onChange={handleChange} placeholder={field.placeholder} required={field.required} className={inputClass} style={{ fontFamily:"'Courier New', monospace" }} />
           </div>
         ))}
@@ -512,12 +541,162 @@ function ContactForm() {
   );
 }
 
+
+function playDataSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.3);
+    master.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.5);
+    master.connect(ctx.destination);
+    // Low drone
+    const osc1 = ctx.createOscillator();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(80, ctx.currentTime);
+    osc1.frequency.linearRampToValueAtTime(110, ctx.currentTime + 1.5);
+    osc1.connect(master);
+    osc1.start(ctx.currentTime);
+    osc1.stop(ctx.currentTime + 3.5);
+    // Mid rising
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    g2.gain.setValueAtTime(0, ctx.currentTime + 0.4);
+    g2.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.9);
+    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.2);
+    osc2.type = "sine";
+    osc2.frequency.setValueAtTime(220, ctx.currentTime + 0.4);
+    osc2.frequency.linearRampToValueAtTime(330, ctx.currentTime + 2.0);
+    osc2.connect(g2); g2.connect(ctx.destination);
+    osc2.start(ctx.currentTime + 0.4); osc2.stop(ctx.currentTime + 3.5);
+    // High sparkle
+    const osc3 = ctx.createOscillator();
+    const g3 = ctx.createGain();
+    g3.gain.setValueAtTime(0, ctx.currentTime + 1.0);
+    g3.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 1.2);
+    g3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.8);
+    osc3.type = "sine";
+    osc3.frequency.setValueAtTime(880, ctx.currentTime + 1.0);
+    osc3.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 2.5);
+    osc3.connect(g3); g3.connect(ctx.destination);
+    osc3.start(ctx.currentTime + 1.0); osc3.stop(ctx.currentTime + 3.5);
+  } catch(e) {}
+}
+
+function DevLoader({ onDone }) {
+  const [progress, setProgress] = useState(0);
+  const [phase, setPhase]       = useState(0);
+  const [lines, setLines]       = useState([]);
+  const [glitch, setGlitch]     = useState(false);
+  const soundFired               = useRef(false);
+
+  const BOOT_LINES = [
+    { text: "BIOS POST.............. OK",   color: "text-gray-500" },
+    { text: "Loading kernel modules.......", color: "text-gray-400" },
+    { text: "Mounting /dev/portfolio......", color: "text-gray-400" },
+    { text: "npm install --production.....", color: "text-orange-400/70" },
+    { text: "Starting React runtime.......",  color: "text-orange-400/70" },
+    { text: "Bundling with Vite..........",   color: "text-orange-400/70" },
+    { text: "\u2713 Dev server ready on :5173",   color: "text-orange-400" },
+  ];
+
+  useEffect(() => {
+    if (!soundFired.current) { soundFired.current = true; playDataSound(); }
+    [100,300].forEach(t => { setTimeout(()=>setGlitch(true),t); setTimeout(()=>setGlitch(false),t+80); });
+    const prog = setInterval(() => {
+      setProgress(p => { if (p >= 100) { clearInterval(prog); return 100; } return p + (p < 50 ? 1.6 : p < 80 ? 1.0 : 0.55); });
+    }, 28);
+    BOOT_LINES.forEach((line, i) => {
+      setTimeout(() => { setLines(l => [...l, line]); if (i === BOOT_LINES.length - 1) setPhase(2); }, 200 + i * 300);
+    });
+    setTimeout(() => onDone(), 3400);
+    return () => clearInterval(prog);
+  }, []);
+
+  return (
+    <motion.div className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center overflow-hidden"
+      exit={{ opacity:0, scale:1.02 }} transition={{ duration:0.6, ease:"easeInOut" }}>
+      {/* Scanlines */}
+      <div className="absolute inset-0 pointer-events-none z-10 opacity-[0.035]"
+        style={{ backgroundImage:"repeating-linear-gradient(0deg,transparent,transparent 2px,#f97316 2px,#f97316 3px)" }}/>
+      {/* Grid */}
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
+        <div style={{ backgroundImage:"linear-gradient(#f97316 1px,transparent 1px),linear-gradient(90deg,#f97316 1px,transparent 1px)", backgroundSize:"48px 48px" }} className="w-full h-full"/>
+      </div>
+      {/* Glitch flash */}
+      <AnimatePresence>
+        {glitch && (
+          <motion.div initial={{ opacity:0 }} animate={{ opacity:0.05 }} exit={{ opacity:0 }}
+            className="absolute inset-0 bg-orange-400 pointer-events-none z-20"/>
+        )}
+      </AnimatePresence>
+      {/* Panel */}
+      <div className="relative z-10 flex flex-col items-center gap-8 px-6 w-full max-w-lg">
+        {/* Logo */}
+        <motion.div initial={{ opacity:0, y:-20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.4 }}
+          className="flex flex-col items-center gap-3">
+          <div className="relative w-16 h-16 flex items-center justify-center">
+            <motion.div animate={{ opacity:[1,0.6,1], x:[0,-1,1,-1,0] }} transition={{ duration:0.12, repeat:3, repeatDelay:1.5 }}>
+              <span className="text-orange-500 font-black text-3xl select-none" style={{ fontFamily:"'Courier New',monospace" }}>{"{ }"}</span>
+            </motion.div>
+          </div>
+          <p className="text-orange-500 text-[11px] tracking-[0.45em] uppercase" style={{ fontFamily:"'Courier New',monospace" }}>Developer Portfolio Loading...</p>
+        </motion.div>
+        {/* Terminal */}
+        <motion.div initial={{ opacity:0, scale:0.96 }} animate={{ opacity:1, scale:1 }} transition={{ delay:0.15, duration:0.35 }}
+          className="w-full bg-black/80 border border-orange-500/25 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-orange-500/15 bg-orange-500/5">
+            <div className="w-2.5 h-2.5 rounded-full bg-orange-500/90"/><div className="w-2.5 h-2.5 rounded-full bg-orange-500/45"/><div className="w-2.5 h-2.5 rounded-full bg-orange-500/20"/>
+            <span className="ml-2 text-orange-500/40 text-[10px] tracking-widest" style={{ fontFamily:"'Courier New',monospace" }}>~/portfolio/dev — zsh</span>
+          </div>
+          <div className="p-4 space-y-1 min-h-[160px]">
+            {lines.map((line, i) => (
+              <motion.div key={i} initial={{ opacity:0, x:-8 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.2 }}
+                className={`text-[11px] ${line.color} flex items-center gap-2`} style={{ fontFamily:"'Courier New',monospace" }}>
+                <span className="text-orange-500/35 text-[9px]">&#9654;</span>
+                <span>{line.text}</span>
+                {i === lines.length-1 && phase < 2 && (
+                  <motion.span animate={{ opacity:[1,0,1] }} transition={{ duration:0.6, repeat:Infinity }}
+                    className="inline-block w-1.5 h-3.5 bg-orange-400 rounded-sm ml-1"/>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+        {/* Progress */}
+        <div className="w-full space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-orange-500/40 text-[10px] tracking-widest uppercase" style={{ fontFamily:"'Courier New',monospace" }}>Build Progress</span>
+            <span className="text-orange-400 text-[11px] font-bold tabular-nums" style={{ fontFamily:"'Courier New',monospace" }}>{Math.round(progress)}%</span>
+          </div>
+          <div className="h-[3px] w-full bg-orange-500/10 rounded-full overflow-hidden">
+            <motion.div className="h-full bg-gradient-to-r from-orange-700 via-orange-500 to-orange-300 rounded-full relative overflow-hidden"
+              style={{ width:`${progress}%` }}>
+              <motion.div className="absolute right-0 top-0 w-8 h-full bg-white/25 blur-sm"
+                animate={{ opacity:[0,1,0] }} transition={{ duration:0.5, repeat:Infinity }}/>
+            </motion.div>
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            <motion.div animate={{ opacity:[1,0,1] }} transition={{ duration:0.8, repeat:Infinity }}
+              className="w-2 h-3 bg-orange-500 rounded-sm"/>
+            <span className="text-orange-500/30 text-[10px] tracking-widest" style={{ fontFamily:"'Courier New',monospace" }}>
+              {progress < 100 ? "compiling..." : "ready."}
+            </span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+
 /* ─── Main Page ─── */
 export default function DevPortfolio() {
   const navigate  = useNavigate();
   const [activeSection, setActiveSection] = useState("about");
   const [scrolled,      setScrolled]      = useState(false);
   const [menuOpen,      setMenuOpen]      = useState(false);
+  const [loading,       setLoading]       = useState(true);
 
   useEffect(()=>{
     const onScroll=()=>{ setScrolled(window.scrollY>30); if(window.scrollY>80) setMenuOpen(false); };
@@ -543,11 +722,15 @@ export default function DevPortfolio() {
   },[menuOpen]);
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <>
+      <AnimatePresence mode="wait">
+        {loading && <DevLoader onDone={() => setLoading(false)} />}
+      </AnimatePresence>
+      <div className="min-h-screen bg-black text-white relative">
       <Particles />
 
       {/* Grid bg */}
-      <div className="fixed inset-0 opacity-[0.035] pointer-events-none z-0">
+      <div className="fixed inset-0 opacity-[0.055] pointer-events-none z-0">
         <div style={{ backgroundImage:"linear-gradient(#f97316 1px, transparent 1px), linear-gradient(90deg, #f97316 1px, transparent 1px)", backgroundSize:"60px 60px" }} className="w-full h-full" />
       </div>
 
@@ -691,7 +874,7 @@ export default function DevPortfolio() {
 
       {/* ── ABOUT (Change 1 + 2) ── */}
       <section id="about" className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-20 pt-24 sm:pt-28 pb-28 sm:pb-32 z-10">
-        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-500/10 blur-[160px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
         <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
 
           {/* LEFT: Text */}
@@ -704,13 +887,13 @@ export default function DevPortfolio() {
               className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6" style={{ fontFamily:"'Courier New', monospace" }}>
               Hi, I'm <span className="text-orange-500">Shiv</span>
               <br />
-              <span className="text-orange-400/70 text-2xl sm:text-3xl font-normal mt-2 block">Full-Stack Developer</span>
+              <span className="text-orange-400/70 text-2xl sm:text-3xl font-normal mt-2 block">Full-Stack Developer & Data Analyst</span>
             </motion.h1>
             <motion.p initial={{ opacity:0, y:30 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.55, duration:0.7 }}
               className="text-gray-300 text-base sm:text-lg leading-relaxed mb-4 max-w-xl" style={{ fontFamily:"'Courier New', monospace" }}>
               I'm a <span className="text-orange-400 font-semibold">Computer Science (Data Science)</span> undergraduate
               building practical, data-driven applications at the intersection of development and analytics — using{" "}
-              <span className="text-orange-400">Python, SQL, and JavaScript</span> to design structured systems,
+              <span className="text-orange-400">React.js, Node.js, Express.js, MongoDB, SQL, and JavaScript</span> to design structured systems,
               process real-world data, and deliver interactive solutions.
             </motion.p>
             <motion.p initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.65, duration:0.7 }}
@@ -724,9 +907,9 @@ export default function DevPortfolio() {
               className="flex flex-wrap gap-3 mb-10">
               {[
                 { label:"Projects",     value:"3+" },
-                { label:"Certificates", value:"6"  },
+                { label:"Certificates", value:"6+"  },
                 { label:"Languages",    value:"5+"  },
-                { label:"Year",         value:"Final Year" },
+                { label:"Year",         value:"Final Year Student" },
               ].map((s)=>(
                 <div key={s.label} className="px-4 py-2 border border-orange-500/25 bg-orange-500/8 rounded-xl text-center">
                   <p className="text-orange-400 font-bold text-sm" style={{ fontFamily:"'Courier New', monospace" }}>{s.value}</p>
@@ -759,7 +942,7 @@ export default function DevPortfolio() {
               <div className="absolute -bottom-3 -right-3 w-6 h-6 border-b-2 border-r-2 border-orange-500/70" />
 
               <motion.svg viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto"
-                animate={{ y:[0,-12,0] }} transition={{ duration:5, repeat:Infinity, ease:"easeInOut" }}>
+                animate={{ y:[0,-16,0], rotate:[0,1,-1,0] }} transition={{ duration:5.5, repeat:Infinity, ease:"easeInOut" }}>
                 {/* Browser window */}
                 <rect x="20" y="20" width="440" height="380" rx="14" fill="#0d0d0d" stroke="#f97316" strokeWidth="1" strokeOpacity="0.3"/>
                 {/* Top bar */}
@@ -845,7 +1028,7 @@ export default function DevPortfolio() {
         <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20"
           animate={{ y:[0,10,0] }} transition={{ duration:1.8, repeat:Infinity, ease:"easeInOut" }}>
           <span className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase" style={{ fontFamily:"'Courier New', monospace" }}>scroll</span>
-          <motion.div className="w-[2px] h-7 bg-gradient-to-b from-orange-400 via-orange-500/60 to-transparent rounded-full"
+          <motion.div className="w-[2px] h-8 bg-gradient-to-b from-orange-300 via-orange-500/80 to-transparent rounded-full"
             animate={{ scaleY:[1,1.3,1], opacity:[1,0.5,1] }} transition={{ duration:1.8, repeat:Infinity }}/>
           <motion.div animate={{ y:[0,5,0], opacity:[1,0.3,1] }} transition={{ duration:1.8, repeat:Infinity }}
             className="text-orange-400 text-xs">▼</motion.div>
@@ -894,7 +1077,7 @@ export default function DevPortfolio() {
       {/* ── PROJECTS (Change 5) ── */}
       <section id="projects" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
           <FadeIn>
             <SectionLabel comment="// work" title="Projects" />
@@ -909,7 +1092,7 @@ export default function DevPortfolio() {
       {/* ── CODING PROFILES ── */}
       <section id="coding" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
           <FadeIn>
             <SectionLabel comment="// competitive programming & open source" title="Coding Profiles" />
@@ -933,7 +1116,7 @@ export default function DevPortfolio() {
       {/* ── EDUCATION ── */}
       <section id="education" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-orange-500/5 blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-orange-500/10 blur-[90px] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
           <FadeIn>
             <SectionLabel comment="// academic background" title="Education" />
@@ -946,8 +1129,8 @@ export default function DevPortfolio() {
             <div className="flex flex-col gap-10">
               {[
                 { level:"Undergraduate", icon:"🎓", degree:"Bachelor of Technology", stream:"Computer Science & Engineering (Data Science)", institution:"Pranveer Singh Institute of Technology (PSIT), Kanpur", grade:"Overall 70%", period:"2022 – Present", status:"Ongoing", statusColor:"text-green-400 border-green-500/40 bg-green-500/10", skills:["React","Node.js","Python","DSA","SQL","Systems"], gradient:"from-orange-500/15 to-orange-900/5", borderColor:"border-orange-500/30", glowColor:"rgba(249,115,22,0.10)", accentColor:"text-orange-400", dotColor:"bg-orange-400", delay:0 },
-                { level:"Intermediate (Class XII)", icon:"📘", degree:"CBSE — Science Stream", stream:"Physics, Chemistry, Mathematics & Computer Science", institution:"Doon International School, Kanpur", grade:"74.8%", period:"2019 – 2021", status:"Completed", statusColor:"text-blue-400 border-blue-500/40 bg-blue-500/10", skills:["Mathematics","Physics","Chemistry","CS Basics"], gradient:"from-blue-500/15 to-blue-900/5", borderColor:"border-blue-500/30", glowColor:"rgba(59,130,246,0.10)", accentColor:"text-blue-400", dotColor:"bg-blue-400", delay:0.15 },
-                { level:"High School (Class X)", icon:"📗", degree:"ICSE — General Stream", stream:"Science, Mathematics & English", institution:"Mercy Memorial School, Kanpur", grade:"82.4%", period:"2017 – 2019", status:"Completed", statusColor:"text-purple-400 border-purple-500/40 bg-purple-500/10", skills:["Science","Mathematics","English","Computers"], gradient:"from-purple-500/15 to-purple-900/5", borderColor:"border-purple-500/30", glowColor:"rgba(168,85,247,0.10)", accentColor:"text-purple-400", dotColor:"bg-purple-400", delay:0.3 },
+                { level:"Intermediate (Class XII)", icon:"📘", degree:"CBSE - Science Stream", stream:"Physics, Chemistry, Mathematics & Computer Science", institution:"Doon International School, Kanpur", grade:"74.8%", period:"2019 – 2021", status:"Completed", statusColor:"text-blue-400 border-blue-500/40 bg-blue-500/10", skills:["Mathematics","Physics","Chemistry","CS Basics"], gradient:"from-blue-500/15 to-blue-900/5", borderColor:"border-blue-500/30", glowColor:"rgba(59,130,246,0.10)", accentColor:"text-blue-400", dotColor:"bg-blue-400", delay:0.15 },
+                { level:"High School (Class X)", icon:"📗", degree:"ICSE - General Stream", stream:"Science, Mathematics & English", institution:"Mercy Memorial School, Kanpur", grade:"82.4%", period:"2017 – 2019", status:"Completed", statusColor:"text-purple-400 border-purple-500/40 bg-purple-500/10", skills:["Science","Mathematics","English","Computers"], gradient:"from-purple-500/15 to-purple-900/5", borderColor:"border-purple-500/30", glowColor:"rgba(168,85,247,0.10)", accentColor:"text-purple-400", dotColor:"bg-purple-400", delay:0.3 },
               ].map((edu)=><EducationCard key={edu.level} edu={edu} />)}
             </div>
           </div>
@@ -957,11 +1140,11 @@ export default function DevPortfolio() {
       {/* ── CONTACT ── */}
       <section id="contact" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
           <FadeIn>
             <SectionLabel comment="// let's connect" title="Contact" />
-            <p className="text-gray-500 text-xs -mt-8 mb-12 tracking-widest" style={{ fontFamily:"'Courier New', monospace" }}>// drop a message — I'll get back to you</p>
+            <p className="text-gray-500 text-xs -mt-8 mb-12 tracking-widest" style={{ fontFamily:"'Courier New', monospace" }}>// Drop a message — I'll get back to you</p>
           </FadeIn>
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10">
             <FadeIn delay={0.1} className="lg:col-span-2">
@@ -1000,10 +1183,11 @@ export default function DevPortfolio() {
 
       {/* ── FOOTER ── */}
       <footer className="relative z-10 py-8 text-center border-t border-orange-500/10">
-        <p className="text-orange-500/30 text-[11px] tracking-widest" style={{ fontFamily:"'Courier New', monospace" }}>
-          © {new Date().getFullYear()} Shiv Prakash Gupta — Dev Portfolio
+        <p className="text-orange-400/80 text-[11px] tracking-widest" style={{ fontFamily:"'Courier New', monospace" }}>
+          © {new Date().getFullYear()} Shiv Prakash Gupta — MYDATAAPPLIED.COM - Dev Portfolio
         </p>
       </footer>
     </div>
+    </>
   );
 }

@@ -170,7 +170,7 @@ const CODING_PROFILES = [
     stats: [
       { label: "Badge", value: "5★ Problem Solving" },
       { label: "Focus", value: "SQL/Python/C++" },
-      { label: "Domain", value: "Data" },
+      { label: "Domain", value: "DSA" },
     ],
     Logo: HackerRankSVG,
     gradient: "from-green-500/15 to-green-900/5",
@@ -202,17 +202,31 @@ const CODING_PROFILES = [
 /* ── Shared UI ── */
 function Particles() {
   const [particles] = useState(() =>
-    Array.from({ length: 22 }, (_, i) => ({
-      id: i, x: Math.random() * 100, y: Math.random() * 100,
-      size: Math.random() * 3 + 1, duration: Math.random() * 8 + 6, delay: Math.random() * 5,
-    }))
+    Array.from({ length: 36 }, (_, i) => {
+      const bright = i % 5 === 0;
+      const large  = i % 9 === 0;
+      return {
+        id: i, x: Math.random() * 100, y: Math.random() * 100,
+        size: large ? Math.random() * 5 + 3 : Math.random() * 2.5 + 1,
+        duration: Math.random() * 9 + 5, delay: Math.random() * 6,
+        bright, large,
+        drift: (Math.random() - 0.5) * 30,
+      };
+    })
   );
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
       {particles.map((p) => (
-        <motion.div key={p.id} className="absolute rounded-full bg-orange-500/25"
-          style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-          animate={{ y: [0, -50, 0], opacity: [0.15, 0.7, 0.15], scale: [1, 1.6, 1] }}
+        <motion.div key={p.id}
+          className={`absolute rounded-full ${p.bright ? "bg-orange-400" : p.large ? "bg-orange-500/40" : "bg-orange-500/20"}`}
+          style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size,
+            boxShadow: p.bright ? `0 0 ${p.size * 4}px rgba(249,115,22,0.6)` : p.large ? `0 0 ${p.size * 2}px rgba(249,115,22,0.3)` : "none" }}
+          animate={{
+            y: [0, -(40 + Math.random() * 60), 0],
+            x: [0, p.drift, 0],
+            opacity: p.bright ? [0.5, 1, 0.5] : [0.1, 0.55, 0.1],
+            scale: [1, p.bright ? 2 : 1.6, 1],
+          }}
           transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: "easeInOut" }}
         />
       ))}
@@ -222,11 +236,13 @@ function Particles() {
 
 function FadeIn({ children, delay = 0, className = "" }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 50 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay }} className={className}>
+    <motion.div ref={ref}
+      initial={{ opacity: 0, y: 40, filter: "blur(4px)" }}
+      animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}>
       {children}
     </motion.div>
   );
@@ -235,7 +251,7 @@ function FadeIn({ children, delay = 0, className = "" }) {
 function SkillItem({ skill }) {
   const [err, setErr] = useState(false);
   return (
-    <motion.div whileHover={{ scale: 1.12, y: -5 }}
+    <motion.div whileHover={{ scale: 1.14, y: -7, boxShadow: "0 12px 40px rgba(249,115,22,0.25)" }}
       className="flex flex-col items-center gap-3 min-w-[110px] px-4 py-5
         border border-orange-500/20 bg-orange-500/5 rounded-2xl
         hover:border-orange-500/60 hover:bg-orange-500/10 transition-colors duration-300 cursor-default">
@@ -258,7 +274,7 @@ function SkillsStrip() {
       <div className="absolute right-0 top-0 h-full w-28 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
       <motion.div className="flex gap-5 w-max"
         animate={{ x: ["0%", "-50%"] }}
-        transition={{ duration: 32, repeat: Infinity, ease: "linear" }}>
+        transition={{ duration: 36, repeat: Infinity, ease: "linear" }}>
         {doubled.map((skill, idx) => <SkillItem key={`${skill.name}-${idx}`} skill={skill} />)}
       </motion.div>
     </div>
@@ -272,7 +288,7 @@ function CertCard({ cert, index }) {
     <motion.div ref={ref} initial={{ opacity: 0, y: 60 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: index * 0.1 }}
-      whileHover={{ y: -8, scale: 1.025 }}
+      whileHover={{ y: -10, scale: 1.03, boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }}
       className={`relative rounded-2xl border ${cert.borderColor} bg-gradient-to-br ${cert.gradient}
         backdrop-blur-sm p-6 flex flex-col gap-4 overflow-hidden group cursor-pointer`}
       onClick={() => window.open(cert.link, "_blank")}>
@@ -318,7 +334,7 @@ function CodingProfileCard({ profile, index }) {
       initial={{ opacity: 0, y: 70, scale: 0.95 }}
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{ duration: 0.6, delay: index * 0.13, type: "spring", stiffness: 75 }}
-      whileHover={{ y: -10, scale: 1.02 }}
+      whileHover={{ y: -12, scale: 1.025, boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
       className={`relative rounded-2xl border ${profile.borderColor} bg-gradient-to-br ${profile.gradient}
         backdrop-blur-sm p-7 flex flex-col gap-5 overflow-hidden group cursor-pointer`}
       onClick={() => window.open(profile.url, "_blank")}
@@ -428,7 +444,7 @@ function EducationCard({ edu }) {
 
       {/* Card */}
       <motion.div
-        whileHover={{ y: -6, scale: 1.015 }}
+        whileHover={{ y: -8, scale: 1.018, boxShadow: "0 20px 50px rgba(0,0,0,0.45)" }}
         className={`relative rounded-2xl border ${edu.borderColor} bg-gradient-to-br ${edu.gradient}
           backdrop-blur-sm p-4 sm:p-6 md:p-8 overflow-hidden group`}
       >
@@ -606,17 +622,176 @@ function ContactForm() {
 }
 
 function SectionLabel({ comment, title }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
   return (
-    <div className="mb-12">
-      <span className="text-orange-500 text-sm tracking-[0.3em] uppercase" style={{ fontFamily: "'Courier New', monospace" }}>
+    <div className="mb-12" ref={ref}>
+      <motion.span
+        initial={{ opacity: 0, x: -12 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="text-orange-500 text-sm tracking-[0.3em] uppercase block"
+        style={{ fontFamily: "'Courier New', monospace" }}>
         {comment}
-      </span>
-      <h2 className="text-4xl sm:text-5xl font-bold mt-3" style={{ fontFamily: "'Courier New', monospace" }}>
-        {title}<span className="text-orange-500">.</span>
-      </h2>
+      </motion.span>
+      <div className="relative mt-3 overflow-hidden">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="text-4xl sm:text-5xl font-bold" style={{ fontFamily: "'Courier New', monospace" }}>
+          {title}<span className="text-orange-500">.</span>
+        </motion.h2>
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={inView ? { scaleX: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+          style={{ originX: 0 }}
+          className="absolute bottom-0 left-0 h-[2px] w-16 bg-gradient-to-r from-orange-500 to-transparent"
+        />
+      </div>
     </div>
   );
 }
+
+
+function playDataSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(0, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.3);
+    master.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.5);
+    master.connect(ctx.destination);
+    // Low drone
+    const osc1 = ctx.createOscillator();
+    osc1.type = "sine";
+    osc1.frequency.setValueAtTime(80, ctx.currentTime);
+    osc1.frequency.linearRampToValueAtTime(110, ctx.currentTime + 1.5);
+    osc1.connect(master);
+    osc1.start(ctx.currentTime);
+    osc1.stop(ctx.currentTime + 3.5);
+    // Mid rising
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    g2.gain.setValueAtTime(0, ctx.currentTime + 0.4);
+    g2.gain.linearRampToValueAtTime(0.12, ctx.currentTime + 0.9);
+    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.2);
+    osc2.type = "sine";
+    osc2.frequency.setValueAtTime(220, ctx.currentTime + 0.4);
+    osc2.frequency.linearRampToValueAtTime(330, ctx.currentTime + 2.0);
+    osc2.connect(g2); g2.connect(ctx.destination);
+    osc2.start(ctx.currentTime + 0.4); osc2.stop(ctx.currentTime + 3.5);
+    // High sparkle
+    const osc3 = ctx.createOscillator();
+    const g3 = ctx.createGain();
+    g3.gain.setValueAtTime(0, ctx.currentTime + 1.0);
+    g3.gain.linearRampToValueAtTime(0.07, ctx.currentTime + 1.2);
+    g3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.8);
+    osc3.type = "sine";
+    osc3.frequency.setValueAtTime(880, ctx.currentTime + 1.0);
+    osc3.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 2.5);
+    osc3.connect(g3); g3.connect(ctx.destination);
+    osc3.start(ctx.currentTime + 1.0); osc3.stop(ctx.currentTime + 3.5);
+  } catch(e) {}
+}
+
+function DataLoader({ onDone }) {
+  const [progress, setProgress] = useState(0);
+  const [phase, setPhase]       = useState(0);
+  const [rows, setRows]         = useState([]);
+  const soundFired               = useRef(false);
+
+  const LINES = [
+    "initializing data pipeline...",
+    "loading dataset modules......",
+    "connecting to SQL engine.....",
+    "running EDA algorithms.......",
+    "building dashboard layers....",
+    "rendering visualizations.....",
+    "portfolio.load() complete  \u2713",
+  ];
+
+  useEffect(() => {
+    if (!soundFired.current) { soundFired.current = true; playDataSound(); }
+    const prog = setInterval(() => {
+      setProgress(p => { if (p >= 100) { clearInterval(prog); return 100; } return p + (p < 60 ? 1.4 : p < 85 ? 0.8 : 0.5); });
+    }, 28);
+    LINES.forEach((line, i) => {
+      setTimeout(() => { setRows(r => [...r, line]); if (i === LINES.length - 1) setPhase(2); }, 280 + i * 320);
+    });
+    setTimeout(() => onDone(), 3400);
+    return () => clearInterval(prog);
+  }, []);
+
+  return (
+    <motion.div className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center overflow-hidden"
+      exit={{ opacity: 0 }} transition={{ duration: 0.7, ease: "easeInOut" }}>
+      {/* Grid */}
+      <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
+        <div style={{ backgroundImage:"linear-gradient(#f97316 1px,transparent 1px),linear-gradient(90deg,#f97316 1px,transparent 1px)", backgroundSize:"48px 48px" }} className="w-full h-full"/>
+      </div>
+      {/* Ambient orb */}
+      <motion.div className="absolute w-[500px] h-[500px] rounded-full bg-orange-500/14 blur-[130px] pointer-events-none"
+        animate={{ scale:[1,1.15,1], opacity:[0.5,1,0.5] }} transition={{ duration:3, repeat:Infinity }}/>
+      {/* Panel */}
+      <div className="relative z-10 flex flex-col items-center gap-8 px-6 w-full max-w-lg">
+        {/* Logo ring */}
+        <motion.div initial={{ opacity:0, y:-20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.5 }}
+          className="flex flex-col items-center gap-3">
+          <div className="relative w-16 h-16 flex items-center justify-center">
+            <motion.div animate={{ rotate:[0,360] }} transition={{ duration:8, repeat:Infinity, ease:"linear" }}
+              className="absolute inset-0 rounded-full border border-orange-500/30"/>
+            <motion.div animate={{ rotate:[360,0] }} transition={{ duration:4, repeat:Infinity, ease:"linear" }}
+              className="absolute inset-2 rounded-full border border-orange-500/50 border-dashed"/>
+            <span className="text-2xl">📊</span>
+          </div>
+          <p className="text-orange-500 text-[11px] tracking-[0.45em] uppercase" style={{ fontFamily:"'Courier New',monospace" }}>Analytics Portfolio  Loading...</p>
+        </motion.div>
+        {/* Terminal */}
+        <motion.div initial={{ opacity:0, scale:0.96 }} animate={{ opacity:1, scale:1 }} transition={{ delay:0.2, duration:0.4 }}
+          className="w-full bg-black/80 border border-orange-500/25 rounded-xl overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-orange-500/15 bg-orange-500/5">
+            <div className="w-2.5 h-2.5 rounded-full bg-orange-500/90"/><div className="w-2.5 h-2.5 rounded-full bg-orange-500/45"/><div className="w-2.5 h-2.5 rounded-full bg-orange-500/20"/>
+            <span className="ml-2 text-orange-500/40 text-[10px] tracking-widest" style={{ fontFamily:"'Courier New',monospace" }}>~/portfolio/data — bash</span>
+          </div>
+          <div className="p-4 font-mono text-[11px] space-y-1 min-h-[160px]">
+            {rows.map((line, i) => (
+              <motion.div key={i} initial={{ opacity:0, x:-10 }} animate={{ opacity:1, x:0 }} transition={{ duration:0.25 }}
+                className="flex items-center gap-2">
+                <span className="text-orange-500/50">$</span>
+                <span className={i === rows.length-1 && phase===2 ? "text-orange-400" : "text-gray-400"}>{line}</span>
+                {i === rows.length-1 && phase < 2 && (
+                  <motion.span animate={{ opacity:[1,0,1] }} transition={{ duration:0.7, repeat:Infinity }}
+                    className="inline-block w-1.5 h-3.5 bg-orange-400 rounded-sm"/>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+        {/* Progress */}
+        <div className="w-full space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-orange-500/40 text-[10px] tracking-widest uppercase" style={{ fontFamily:"'Courier New',monospace" }}>Loading</span>
+            <span className="text-orange-400 text-[11px] font-bold tabular-nums" style={{ fontFamily:"'Courier New',monospace" }}>{Math.round(progress)}%</span>
+          </div>
+          <div className="h-[3px] w-full bg-orange-500/10 rounded-full overflow-hidden">
+            <motion.div className="h-full bg-gradient-to-r from-orange-600 via-orange-400 to-orange-300 rounded-full"
+              style={{ width:`${progress}%` }}/>
+          </div>
+          <div className="flex gap-1.5 justify-center pt-1">
+            {[0,1,2,3,4].map(i => (
+              <motion.div key={i} className="w-1 h-1 rounded-full bg-orange-500"
+                animate={{ opacity:[0.2,1,0.2], scale:[1,1.5,1] }}
+                transition={{ duration:1.2, delay:i*0.15, repeat:Infinity }}/>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 
 /* ── Main Export ── */
 export default function DataPortfolio() {
@@ -624,6 +799,7 @@ export default function DataPortfolio() {
   const [activeSection, setActiveSection] = useState("about");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading]   = useState(true);
 
   useEffect(() => {
     const onScroll = () => {
@@ -656,11 +832,15 @@ export default function DataPortfolio() {
   }, [menuOpen]);
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <>
+      <AnimatePresence mode="wait">
+        {loading && <DataLoader onDone={() => setLoading(false)} />}
+      </AnimatePresence>
+      <div className="min-h-screen bg-black text-white relative">
       <Particles />
 
       {/* Grid bg */}
-      <div className="fixed inset-0 opacity-[0.035] pointer-events-none z-0">
+      <div className="fixed inset-0 opacity-[0.055] pointer-events-none z-0">
         <div style={{
           backgroundImage: "linear-gradient(#f97316 1px, transparent 1px), linear-gradient(90deg, #f97316 1px, transparent 1px)",
           backgroundSize: "60px 60px",
@@ -1032,7 +1212,7 @@ export default function DataPortfolio() {
       {/* ── ABOUT ── */}
       <section id="about" className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-20 pt-24 sm:pt-28 pb-28 sm:pb-32 z-10">
         {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-500/10 blur-[160px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
 
         <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
 
@@ -1204,9 +1384,9 @@ export default function DataPortfolio() {
 
                 {/* Tech tags */}
                 {[
-                  { x: 24, y: 99, text: "Python" },
-                  { x: 24, y: 127, text: "SQL" },
-                  { x: 24, y: 155, text: "Power BI" },
+                  { x: 25, y: 100, text: "Python" },
+                  { x: 25, y: 128, text: "SQL" },
+                  { x: 25, y: 156, text: "Power BI" },
                 ].map((tag, i) => (
                   <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 + i * 0.12 }}>
                     <rect x={tag.x} y={tag.y - 13} width="68" height="18" rx="9"
@@ -1216,9 +1396,9 @@ export default function DataPortfolio() {
                 ))}
 
                 {/* Blinking cursor */}
-                <motion.rect x="40" y="358" width="8" height="14" rx="1" fill="#f97316"
+                <motion.rect x="50" y="358" width="8" height="14" rx="1" fill="#f97316"
                   animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }}/>
-                <text x="50" y="370" fontSize="10" fill="#f97316" opacity="0.45" fontFamily="monospace">analyzing data...</text>
+                <text x="60" y="370" fontSize="10" fill="#f97316" opacity="0.45" fontFamily="monospace">analyzing data...</text>
               </motion.svg>
             </div>
           </motion.div>
@@ -1231,7 +1411,7 @@ export default function DataPortfolio() {
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}>
           <span className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase"
             style={{ fontFamily: "'Courier New', monospace" }}>scroll</span>
-          <motion.div className="w-[2px] h-7 bg-gradient-to-b from-orange-400 via-orange-500/60 to-transparent rounded-full"
+          <motion.div className="w-[2px] h-8 bg-gradient-to-b from-orange-300 via-orange-500/80 to-transparent rounded-full"
             animate={{ scaleY: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
             transition={{ duration: 1.8, repeat: Infinity }} />
           <motion.div animate={{ y: [0, 5, 0], opacity: [1, 0.3, 1] }}
@@ -1250,8 +1430,8 @@ export default function DataPortfolio() {
               {[
                 { label: "Languages",   items: "Python, C++, SQL" },
                 { label: "Libraries",   items: "Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn" },
-                { label: "Databases",   items: "PostgreSQL, MySQL, SQLite" },
-                { label: "Visualization Tools & Sheets", items: "Power BI, Tableau, Excel, Google Sheets" },
+                { label: "Databases",   items: "PostgreSQL, MySQL, SQLite, MongoDB" },
+                { label: "BI & Sheets", items: "Power BI, Tableau, Excel, Google Sheets" },
               ].map((cat) => (
                 <motion.div key={cat.label} whileHover={{ scale: 1.03 }}
                   className="p-5 border border-orange-500/20 rounded-xl bg-orange-500/5 transition-colors hover:border-orange-500/40">
@@ -1304,7 +1484,7 @@ export default function DataPortfolio() {
       {/* ── CODING PROFILES ── */}
       <section id="coding" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
           <FadeIn>
@@ -1343,7 +1523,7 @@ export default function DataPortfolio() {
       {/* ── EDUCATION ── */}
       <section id="education" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-orange-500/5 blur-[100px] pointer-events-none" />
+        <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-orange-500/10 blur-[90px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 md:px-16 relative z-10">
           <FadeIn>
@@ -1379,7 +1559,7 @@ export default function DataPortfolio() {
                   period: "2022 – Present",
                   status: "Ongoing",
                   statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
-                  skills: ["Python", "Data Science", "ML", "DSA", "SQL", "Analytics", "Data Mining"],
+                  skills: ["Python", "Data Science", "ML", "DSA", "SQL", "Data Analytics"],
                   gradient: "from-orange-500/15 to-orange-900/5",
                   borderColor: "border-orange-500/30",
                   glowColor: "rgba(249,115,22,0.10)",
@@ -1390,14 +1570,14 @@ export default function DataPortfolio() {
                 {
                   level: "Intermediate (Class XII)",
                   icon: "📘",
-                  degree: "CBSE — Science Stream",
+                  degree: "CBSE - Science Stream",
                   stream: "Physics, Chemistry, Mathematics & Computer Science",
                   institution: "Doon International School, Kanpur",
                   grade: "74.8%",
                   period: "2019 – 2021",
                   status: "Completed",
                   statusColor: "text-blue-400 border-blue-500/40 bg-blue-500/10",
-                  skills: ["Mathematics", "Physics", "Chemistry", "CS Basics", "Hindi", "Physical Education"],
+                  skills: ["Mathematics", "Physics", "Chemistry", "CS Basics"],
                   gradient: "from-blue-500/15 to-blue-900/5",
                   borderColor: "border-blue-500/30",
                   glowColor: "rgba(59,130,246,0.10)",
@@ -1408,14 +1588,14 @@ export default function DataPortfolio() {
                 {
                   level: "High School (Class X)",
                   icon: "📗",
-                  degree: "ICSE — General Stream",
+                  degree: "ICSE - General Stream",
                   stream: "Science, Mathematics & English",
                   institution: "Mercy Memorial School, Kanpur",
                   grade: "82.4%",
                   period: "2017 – 2019",
                   status: "Completed",
                   statusColor: "text-purple-400 border-purple-500/40 bg-purple-500/10",
-                  skills: ["Science", "Mathematics", "English", "Computer Applications", "Indian History", "Geography"],
+                  skills: ["Science", "Mathematics", "English", "Computers"],
                   gradient: "from-purple-500/15 to-purple-900/5",
                   borderColor: "border-purple-500/30",
                   glowColor: "rgba(168,85,247,0.10)",
@@ -1432,7 +1612,7 @@ export default function DataPortfolio() {
       {/* ── CONTACT ── */}
       <section id="contact" className="relative py-16 sm:py-24 z-10">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-orange-500/5 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
           <FadeIn>
@@ -1465,7 +1645,7 @@ export default function DataPortfolio() {
                     icon: "📍",
                     label: "Location",
                     value: "Kanpur, Uttar Pradesh, India",
-                    href: null,
+                    href: "https://kanpurnagar.nic.in/tourist-places/",
                   },
                   {
                     icon: "🔗",
@@ -1543,11 +1723,11 @@ export default function DataPortfolio() {
 
       {/* ── FOOTER ── */}
       <footer className="relative z-10 py-8 text-center border-t border-orange-500/10">
-        <p className="text-orange-500/30 text-[11px] tracking-widest" style={{ fontFamily: "'Courier New', monospace" }}>
-          All Copyrights Reserved © {new Date().getFullYear()} Shiv Prakash Gupta — MYDATAAPPLIED.COM - 
-          Data Portfolio 
+        <p className="text-orange-400/80 text-[11px] tracking-widest" style={{ fontFamily:"'Courier New', monospace" }}>
+          © {new Date().getFullYear()} Shiv Prakash Gupta — MYDATAAPPLIED.COM - Analytics Portfolio
         </p>
       </footer>
     </div>
+    </>
   );
 }
