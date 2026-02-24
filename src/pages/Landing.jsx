@@ -139,7 +139,7 @@ function LandingLoader({ onDone }) {
     return () => [t1,t2,t3,t4].forEach(clearTimeout);
   }, []);
 
-  const LOGO_CHARS = ['<','M','D','A','T','A','A','P','P','L','I','E','D','.',  'C','O','M','/','>'];
+  const LOGO_CHARS = ['<','M','Y','D','A','T','A','A','P','P','L','I','E','D','.',  'C','O','M','/','>'];
   const LOGO_COLORS = ch => ['<','/','>', '.'].includes(ch) ? '#f97316' : '#ffffff';
 
   const particles = Array.from({ length: 24 }, (_, i) => {
