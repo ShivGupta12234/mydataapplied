@@ -2670,7 +2670,7 @@ export default function DevPortfolio() {
             className="text-orange-500/30 text-[11px] tracking-widest"
             style={{ fontFamily: "'Courier New', monospace" }}
           >
-            © {new Date().getFullYear()} Shiv Prakash Gupta — Dev Portfolio
+          ALL COPYRIGHTS  © {new Date().getFullYear()} Shiv Prakash Gupta - MYDATAAPPLIED.COM - Dev Portfolio
           </p>
         </footer>
       </div>

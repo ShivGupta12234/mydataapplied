@@ -453,7 +453,7 @@ export default function Landing() {
         {/* ── Footer — inside bg-black div so background applies ── */}
         <footer className="relative z-10 py-4 text-center border-t border-orange-500/10 bg-black px-4">
           <p className="text-orange-400/80 text-[10px] sm:text-[11px] tracking-widest break-words" style={{ fontFamily: "'Courier New', monospace" }}>
-            ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash Gupta — MYDATAAPPLIED.COM
+            ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash Gupta - MYDATAAPPLIED.COM
           </p>
         </footer>
 
