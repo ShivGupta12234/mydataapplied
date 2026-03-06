@@ -7,9 +7,9 @@ const NAV_LINKS = ["about", "skills", "certificates", "projects", "coding", "edu
 const NAV_LABEL = {
   about:        "About",
   skills:       "Skills",
-  certificates: "Certificates",
+  certificates: "Certs",
   projects:     "Projects",
-  coding:       "{} Profiles",
+  coding:       "{ } Profiles",
   education:    "Education",
   contact:      "Contact",
 };
@@ -132,8 +132,8 @@ const CODING_PROFILES = [
     url: "https://leetcode.com/u/shivpgupta001/",
     description: "Solving data structure & algorithm problems with clean, optimal solutions. Focused on reducing runtime and sharpening problem-solving instincts.",
     stats: [
-      { label: "Solved", value: "170+" },
-      { label: "Focus", value: "DSA/SQL" },
+      { label: "Solved", value: "50+" },
+      { label: "Focus", value: "DSA" },
       { label: "Lang", value: "Python/C++" },
     ],
     Logo: LeetCodeSVG,
@@ -168,9 +168,9 @@ const CODING_PROFILES = [
     url: "https://www.hackerrank.com/profile/prakashguptashiv",
     description: "Earning badges across SQL, Python and Problem Solving domains. Consistently practising real-world query challenges.",
     stats: [
-      { label: "Badge", value: "5★ Problem Solving" },
-      { label: "Focus", value: "SQL/Python/C++" },
-      { label: "Domain", value: "DSA" },
+      { label: "Badge", value: "5★ SQL" },
+      { label: "Focus", value: "SQL/Python" },
+      { label: "Domain", value: "Data" },
     ],
     Logo: HackerRankSVG,
     gradient: "from-green-500/15 to-green-900/5",
@@ -188,7 +188,7 @@ const CODING_PROFILES = [
     stats: [
       { label: "Focus", value: "SQL" },
       { label: "Platform", value: "DataLemur" },
-      { label: "Goal", value: "SQL Practice" },
+      { label: "Goal", value: "Top DS Role" },
     ],
     Logo: DataLemurSVG,
     gradient: "from-orange-500/15 to-red-900/5",
@@ -336,7 +336,7 @@ function CodingProfileCard({ profile, index }) {
       transition={{ duration: 0.6, delay: index * 0.13, type: "spring", stiffness: 75 }}
       whileHover={{ y: -12, scale: 1.025, boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
       className={`relative rounded-2xl border ${profile.borderColor} bg-gradient-to-br ${profile.gradient}
-        backdrop-blur-sm p-7 flex flex-col gap-5 overflow-hidden group cursor-pointer`}
+        backdrop-blur-sm p-4 sm:p-6 flex flex-col gap-4 overflow-hidden group cursor-pointer`}
       onClick={() => window.open(profile.url, "_blank")}
     >
       {/* Animated glow blob */}
@@ -746,7 +746,7 @@ function DataLoader({ onDone }) {
               className="absolute inset-2 rounded-full border border-orange-500/50 border-dashed"/>
             <span className="text-2xl">📊</span>
           </div>
-          <p className="text-orange-500 text-[11px] tracking-[0.45em] uppercase" style={{ fontFamily:"'Courier New',monospace" }}>Analytics Portfolio  Loading...</p>
+          <p className="text-orange-500 text-[11px] tracking-[0.45em] uppercase" style={{ fontFamily:"'Courier New',monospace" }}>Data Portfolio</p>
         </motion.div>
         {/* Terminal */}
         <motion.div initial={{ opacity:0, scale:0.96 }} animate={{ opacity:1, scale:1 }} transition={{ delay:0.2, duration:0.4 }}
@@ -836,7 +836,7 @@ export default function DataPortfolio() {
       <AnimatePresence mode="wait">
         {loading && <DataLoader onDone={() => setLoading(false)} />}
       </AnimatePresence>
-      <div className="min-h-screen bg-black text-white relative">
+      <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
       <Particles />
 
       {/* Grid bg */}
@@ -1026,7 +1026,7 @@ export default function DataPortfolio() {
           className="flex items-center gap-2 text-orange-500 font-bold text-sm z-10"
           style={{ fontFamily: "'Courier New', monospace" }}>
           <span className="text-orange-500/50 text-lg">←</span>
-          <span>&lt;MYDATAAPPLIED.COM/&gt;</span>
+          <span>&lt;MDA/&gt;</span>
         </motion.button>
 
         {/* Desktop nav links */}
@@ -1105,7 +1105,7 @@ export default function DataPortfolio() {
         {/* Drawer header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-orange-500/15">
           <div style={{ fontFamily: "'Courier New', monospace" }}>
-            <p className="text-orange-500 font-bold text-sm">&lt;MYDATAAPPLIED.COM/&gt;</p>
+            <p className="text-orange-500 font-bold text-sm">&lt;MDA/&gt;</p>
             <p className="text-gray-600 text-[10px] tracking-widest mt-0.5">mydataapplied.com</p>
           </div>
           <motion.button
@@ -1210,35 +1210,35 @@ export default function DataPortfolio() {
       </motion.div>
 
       {/* ── ABOUT ── */}
-      <section id="about" className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-20 pt-24 sm:pt-28 pb-28 sm:pb-32 z-10">
+      <section id="about" className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-20 pt-20 sm:pt-24 pb-20 sm:pb-28 z-10">
         {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[min(700px,90vw)] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
 
-        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+        <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
 
           {/* LEFT: Text */}
           <div className="flex flex-col items-start text-left">
             <motion.span
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-              className="text-orange-500 text-sm tracking-[0.3em] uppercase block mb-5"
+              className="text-orange-500 text-xs sm:text-sm tracking-[0.3em] uppercase block mb-4 sm:mb-5"
               style={{ fontFamily: "'Courier New', monospace" }}>
               // about me
             </motion.span>
 
             <motion.h1
               initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.8 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-5 sm:mb-6"
               style={{ fontFamily: "'Courier New', monospace" }}>
               Hi, I'm <span className="text-orange-500">Shiv</span>
               <br />
-              <span className="text-orange-400/70 text-2xl sm:text-3xl font-normal mt-2 block">
+              <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-normal mt-2 block">
                 Data Analyst &amp; Developer
               </span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.7 }}
-              className="text-gray-300 text-base sm:text-lg leading-relaxed mb-10 max-w-xl"
+              className="text-gray-300 text-sm sm:text-base leading-relaxed mb-7 sm:mb-10 max-w-xl"
               style={{ fontFamily: "'Courier New', monospace" }}>
               I'm a{" "}
               <span className="text-orange-400 font-semibold">Computer Science (Data Science)</span>{" "}
@@ -1250,15 +1250,15 @@ export default function DataPortfolio() {
             {/* Stat pills */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}
-              className="flex flex-wrap gap-3 mb-10">
+              className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 mb-7 sm:mb-10 w-full sm:w-auto">
               {[
                 { label: "Projects",     value: "5+" },
-                { label: "Certificates", value: "6+" },
-                { label: "Platforms",    value: "4+" },
-                { label: "Year",         value: "Final Year Student" },
+                { label: "Certificates", value: "6" },
+                { label: "Platforms",    value: "4" },
+                { label: "Year",         value: "Final Year" },
               ].map((s) => (
                 <div key={s.label}
-                  className="px-4 py-2 border border-orange-500/25 bg-orange-500/8 rounded-xl text-center">
+                  className="px-3 sm:px-4 py-2 border border-orange-500/25 bg-orange-500/8 rounded-xl text-center">
                   <p className="text-orange-400 font-bold text-sm" style={{ fontFamily: "'Courier New', monospace" }}>{s.value}</p>
                   <p className="text-gray-600 text-[9px] tracking-widest uppercase mt-0.5" style={{ fontFamily: "'Courier New', monospace" }}>{s.label}</p>
                 </div>
@@ -1268,12 +1268,12 @@ export default function DataPortfolio() {
             {/* Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }}
-              className="flex gap-4 flex-wrap">
+              className="flex flex-col xs:flex-row gap-3 w-full xs:w-auto">
               <motion.button
                 whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(249,115,22,0.45)" }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => scrollTo("projects")}
-                className="px-8 py-3 bg-orange-500 text-black font-bold tracking-widest uppercase text-xs hover:bg-orange-400 transition-all"
+                className="px-6 sm:px-8 py-3 bg-orange-500 text-black font-bold tracking-widest uppercase text-xs hover:bg-orange-400 transition-all text-center"
                 style={{ fontFamily: "'Courier New', monospace" }}>
                 View Projects &#8594;
               </motion.button>
@@ -1282,7 +1282,7 @@ export default function DataPortfolio() {
                 download="Shiv_Prakash_Gupta_CV.pdf"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
-                className="px-8 py-3 border border-orange-500 text-orange-500 font-bold tracking-widest uppercase text-xs hover:bg-orange-500/10 transition-all inline-flex items-center gap-2"
+                className="px-6 sm:px-8 py-3 border border-orange-500 text-orange-500 font-bold tracking-widest uppercase text-xs hover:bg-orange-500/10 transition-all inline-flex items-center justify-center gap-2"
                 style={{ fontFamily: "'Courier New', monospace" }}>
                 &#8595; Download CV
               </motion.a>
@@ -1294,9 +1294,9 @@ export default function DataPortfolio() {
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5, duration: 0.9, type: "spring", stiffness: 60 }}
-            className="flex items-center justify-center lg:justify-end"
+            className="flex items-center justify-center lg:justify-end mt-4 lg:mt-0"
           >
-            <div className="relative w-full max-w-[480px]">
+            <div className="relative w-full max-w-[300px] sm:max-w-[380px] lg:max-w-[480px]">
               {/* Corner brackets */}
               <div className="absolute -top-3 -left-3 w-6 h-6 border-t-2 border-l-2 border-orange-500/70" />
               <div className="absolute -top-3 -right-3 w-6 h-6 border-t-2 border-r-2 border-orange-500/70" />
@@ -1384,9 +1384,9 @@ export default function DataPortfolio() {
 
                 {/* Tech tags */}
                 {[
-                  { x: 25, y: 100, text: "Python" },
-                  { x: 25, y: 128, text: "SQL" },
-                  { x: 25, y: 156, text: "Power BI" },
+                  { x: 28, y: 100, text: "Python" },
+                  { x: 28, y: 128, text: "SQL" },
+                  { x: 28, y: 156, text: "Power BI" },
                 ].map((tag, i) => (
                   <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 + i * 0.12 }}>
                     <rect x={tag.x} y={tag.y - 13} width="68" height="18" rx="9"
@@ -1396,9 +1396,9 @@ export default function DataPortfolio() {
                 ))}
 
                 {/* Blinking cursor */}
-                <motion.rect x="50" y="358" width="8" height="14" rx="1" fill="#f97316"
+                <motion.rect x="108" y="358" width="8" height="14" rx="1" fill="#f97316"
                   animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }}/>
-                <text x="60" y="370" fontSize="10" fill="#f97316" opacity="0.45" fontFamily="monospace">analyzing data...</text>
+                <text x="120" y="370" fontSize="10" fill="#f97316" opacity="0.45" fontFamily="monospace">analyzing data...</text>
               </motion.svg>
             </div>
           </motion.div>
@@ -1430,7 +1430,7 @@ export default function DataPortfolio() {
               {[
                 { label: "Languages",   items: "Python, C++, SQL" },
                 { label: "Libraries",   items: "Pandas, NumPy, Scikit-Learn, Matplotlib, Seaborn" },
-                { label: "Databases",   items: "PostgreSQL, MySQL, SQLite, MongoDB" },
+                { label: "Databases",   items: "PostgreSQL, MySQL" },
                 { label: "BI & Sheets", items: "Power BI, Tableau, Excel, Google Sheets" },
               ].map((cat) => (
                 <motion.div key={cat.label} whileHover={{ scale: 1.03 }}
@@ -1455,7 +1455,7 @@ export default function DataPortfolio() {
               // click any card to verify
             </p>
           </FadeIn>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {CERTIFICATES.map((cert, i) => <CertCard key={cert.id} cert={cert} index={i} />)}
           </div>
         </div>
@@ -1512,7 +1512,7 @@ export default function DataPortfolio() {
             </motion.div>
           </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-7">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {CODING_PROFILES.map((profile, i) => (
               <CodingProfileCard key={profile.id} profile={profile} index={i} />
             ))}
@@ -1559,7 +1559,7 @@ export default function DataPortfolio() {
                   period: "2022 – Present",
                   status: "Ongoing",
                   statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
-                  skills: ["Python", "Data Science", "ML", "DSA", "SQL", "Data Analytics"],
+                  skills: ["Python", "Data Science", "ML", "DSA", "SQL", "Analytics"],
                   gradient: "from-orange-500/15 to-orange-900/5",
                   borderColor: "border-orange-500/30",
                   glowColor: "rgba(249,115,22,0.10)",
@@ -1570,7 +1570,7 @@ export default function DataPortfolio() {
                 {
                   level: "Intermediate (Class XII)",
                   icon: "📘",
-                  degree: "CBSE - Science Stream",
+                  degree: "CBSE — Science Stream",
                   stream: "Physics, Chemistry, Mathematics & Computer Science",
                   institution: "Doon International School, Kanpur",
                   grade: "74.8%",
@@ -1588,7 +1588,7 @@ export default function DataPortfolio() {
                 {
                   level: "High School (Class X)",
                   icon: "📗",
-                  degree: "ICSE - General Stream",
+                  degree: "ICSE — General Stream",
                   stream: "Science, Mathematics & English",
                   institution: "Mercy Memorial School, Kanpur",
                   grade: "82.4%",
@@ -1645,13 +1645,13 @@ export default function DataPortfolio() {
                     icon: "📍",
                     label: "Location",
                     value: "Kanpur, Uttar Pradesh, India",
-                    href: "https://kanpurnagar.nic.in/tourist-places/",
+                    href: null,
                   },
                   {
                     icon: "🔗",
                     label: "LinkedIn",
-                    value: "linkedin.com/in/prakash-gupta-shiv",
-                    href: "https://www.linkedin.com/in/prakash-gupta-shiv",
+                    value: "linkedin.com/in/shivpgupta",
+                    href: "https://www.linkedin.com/in/shivpgupta",
                   },
                   {
                     icon: "💻",
@@ -1723,8 +1723,8 @@ export default function DataPortfolio() {
 
       {/* ── FOOTER ── */}
       <footer className="relative z-10 py-8 text-center border-t border-orange-500/10">
-        <p className="text-orange-400/80 text-[11px] tracking-widest" style={{ fontFamily:"'Courier New', monospace" }}>
-        ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash Gupta — MYDATAAPPLIED.COM - Analytics Portfolio
+        <p className="text-orange-500/30 text-[11px] tracking-widest" style={{ fontFamily: "'Courier New', monospace" }}>
+          © {new Date().getFullYear()} Shiv Prakash Gupta — Data Portfolio
         </p>
       </footer>
     </div>

@@ -77,7 +77,7 @@ function DataGlyphs() {
     <>
       {glyphs.map((g, i) => (
         <motion.span key={i}
-          className={`absolute ${g.size} font-bold text-orange-500/20 select-none pointer-events-none`}
+          className={`absolute ${g.size} font-bold text-orange-500/20 select-none pointer-events-none hidden sm:block`}
           style={{ left: g.x, top: g.y, fontFamily: "'Courier New', monospace" }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: [0.1, 0.35, 0.1], y: [0, -12, 0] }}
@@ -139,7 +139,7 @@ function LandingLoader({ onDone }) {
     return () => [t1,t2,t3,t4].forEach(clearTimeout);
   }, []);
 
-  const LOGO_CHARS = ['<','M','Y','D','A','T','A','A','P','P','L','I','E','D','.',  'C','O','M','/','>'];
+  const LOGO_CHARS = ['<','M','D','A','.',  'C','O','M','/','>'];
   const LOGO_COLORS = ch => ['<','/','>', '.'].includes(ch) ? '#f97316' : '#ffffff';
 
   const particles = Array.from({ length: 24 }, (_, i) => {
@@ -265,7 +265,7 @@ export default function Landing() {
       </AnimatePresence>
 
       {/* ── Single full-page wrapper with bg-black ── */}
-      <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+      <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden overflow-x-hidden">
 
         {/* ── Layer 1: Grid ── */}
         <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
@@ -329,7 +329,7 @@ export default function Landing() {
         })}
 
         {/* ── MAIN CONTENT (flex-1 centres vertically) ── */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center gap-6 px-6 py-16">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center gap-4 sm:gap-6 px-4 sm:px-6 py-16 w-full max-w-3xl mx-auto">
 
           {/* Top label */}
           <motion.p
@@ -351,7 +351,7 @@ export default function Landing() {
           />
 
           {/* Title — character by character */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none"
+          <h1 className="text-[2rem] xs:text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none"
             style={{ fontFamily: "'Courier New', monospace" }}>
             {title.split("").map((ch, i) => (
               <motion.span key={i}
@@ -389,7 +389,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.7 }}
-            className="flex gap-5 mt-4 flex-wrap justify-center"
+            className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto justify-center items-center"
           >
             {[
               { label: "📊 Analytics Portfolio", route: "/data", filled: false },
@@ -401,7 +401,7 @@ export default function Landing() {
                 whileHover={{ scale: 1.06, y: -3 }}
                 whileTap={{ scale: 0.96 }}
                 onClick={() => navigate(route)}
-                className={`relative px-10 py-4 font-black tracking-widest uppercase text-sm overflow-hidden
+                className={`relative w-full sm:w-auto px-7 sm:px-10 py-3.5 sm:py-4 font-black tracking-widest uppercase text-sm overflow-hidden
                   transition-all duration-300
                   ${filled
                     ? "bg-orange-500 text-black hover:bg-orange-400"
@@ -451,8 +451,8 @@ export default function Landing() {
         </div>
 
         {/* ── Footer — inside bg-black div so background applies ── */}
-        <footer className="relative z-10 py-4 text-center border-t border-orange-500/10 bg-black">
-          <p className="text-orange-400/80 text-[11px] tracking-widest" style={{ fontFamily: "'Courier New', monospace" }}>
+        <footer className="relative z-10 py-4 text-center border-t border-orange-500/10 bg-black px-4">
+          <p className="text-orange-400/80 text-[10px] sm:text-[11px] tracking-widest break-words" style={{ fontFamily: "'Courier New', monospace" }}>
             ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash Gupta — MYDATAAPPLIED.COM
           </p>
         </footer>
