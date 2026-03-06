@@ -2667,7 +2667,7 @@ export default function DevPortfolio() {
         {/* ── FOOTER ── */}
         <footer className="relative z-10 py-8 text-center border-t border-orange-500/10">
           <p
-            className="text-orange-500/30 text-[11px] tracking-widest"
+            className="text-orange-400/80 text-[11px] tracking-widest"
             style={{ fontFamily: "'Courier New', monospace" }}
           >
           ALL COPYRIGHTS  © {new Date().getFullYear()} Shiv Prakash Gupta - MYDATAAPPLIED.COM - Dev Portfolio

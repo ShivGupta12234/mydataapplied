@@ -1723,7 +1723,7 @@ export default function DataPortfolio() {
 
       {/* ── FOOTER ── */}
       <footer className="relative z-10 py-8 text-center border-t border-orange-500/10">
-        <p className="text-orange-500/30 text-[11px] tracking-widest" style={{ fontFamily: "'Courier New', monospace" }}>
+        <p className="text-orange-400/80 text-[11px] tracking-widest" style={{ fontFamily: "'Courier New', monospace" }}>
         ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash Gupta - MYDATAAPPLIED.COM - Data Portfolio
         </p>
       </footer>
