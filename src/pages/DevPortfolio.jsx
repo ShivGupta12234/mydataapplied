@@ -15,7 +15,7 @@ const NAV_LINKS = [
 const NAV_LABEL = {
   about: "About",
   skills: "Skills",
-  certificates: "Certs",
+  certificates: "Certificates",
   projects: "Projects",
   coding: "{ } Profiles",
   education: "Education",
@@ -1016,7 +1016,7 @@ function ContactForm() {
           name="subject"
           value={form.subject}
           onChange={handleChange}
-          placeholder="Dev Role / Freelance / Collaboration / Other"
+          placeholder="Developer Role / Freelance / Collaboration / Other"
           className={inputClass}
           style={{ fontFamily: "'Courier New', monospace" }}
         />
@@ -1172,7 +1172,7 @@ function DevLoader({ onDone }) {
       exit={{ opacity: 0, scale: 1.02 }}
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >
-      {/* Scanlines */}
+      
       <div
         className="absolute inset-0 pointer-events-none z-10 opacity-[0.035]"
         style={{
@@ -1180,7 +1180,7 @@ function DevLoader({ onDone }) {
             "repeating-linear-gradient(0deg,transparent,transparent 2px,#f97316 2px,#f97316 3px)",
         }}
       />
-      {/* Grid */}
+      
       <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
         <div
           style={{
@@ -1191,7 +1191,7 @@ function DevLoader({ onDone }) {
           className="w-full h-full"
         />
       </div>
-      {/* Glitch flash */}
+      
       <AnimatePresence>
         {glitch && (
           <motion.div
@@ -1202,9 +1202,9 @@ function DevLoader({ onDone }) {
           />
         )}
       </AnimatePresence>
-      {/* Panel */}
+      
       <div className="relative z-10 flex flex-col items-center gap-8 px-6 w-full max-w-lg">
-        {/* Logo */}
+        
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1228,10 +1228,10 @@ function DevLoader({ onDone }) {
             className="text-orange-500 text-[11px] tracking-[0.45em] uppercase"
             style={{ fontFamily: "'Courier New',monospace" }}
           >
-            Dev Portfolio
+            DEVELOPER PORTFOLIO LOADING...
           </p>
         </motion.div>
-        {/* Terminal */}
+        
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1246,7 +1246,7 @@ function DevLoader({ onDone }) {
               className="ml-2 text-orange-500/40 text-[10px] tracking-widest"
               style={{ fontFamily: "'Courier New',monospace" }}
             >
-              ~/portfolio/dev — zsh
+              ~/portfolio/dev — 001
             </span>
           </div>
           <div className="p-4 space-y-1 min-h-[160px]">
@@ -1386,7 +1386,7 @@ export default function DevPortfolio() {
           />
         </div>
 
-        {/* ── LEFT SOCIAL STRIP ── */}
+        
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -1495,7 +1495,7 @@ export default function DevPortfolio() {
           />
         </motion.div>
 
-        {/* ── RIGHT SECTION DOTS ── */}
+        
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -1563,7 +1563,7 @@ export default function DevPortfolio() {
           />
         </motion.div>
 
-        {/* ── NAVBAR ── */}
+        
         <motion.nav
           initial={{ y: -80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -1578,7 +1578,7 @@ export default function DevPortfolio() {
             style={{ fontFamily: "'Courier New', monospace" }}
           >
             <span className="text-orange-500/50 text-lg">←</span>
-            <span>&lt;MDA/&gt;</span>
+            <span>&lt;MYDATAAPPLIED.COM/&gt;</span>
           </motion.button>
           <div className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((section) => (
@@ -1606,9 +1606,9 @@ export default function DevPortfolio() {
               className="hidden lg:flex text-xs text-orange-500 border border-orange-500/30 px-3 py-1.5 rounded-full tracking-widest"
               style={{ fontFamily: "'Courier New', monospace" }}
             >
-              💻 Dev
+              💻 Developer Portfolio
             </div>
-            {/* Hamburger */}
+            
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.93 }}
@@ -1641,7 +1641,7 @@ export default function DevPortfolio() {
           </div>
         </motion.nav>
 
-        {/* ── MOBILE DRAWER ── */}
+        
         <motion.div
           initial={false}
           animate={
@@ -1661,9 +1661,9 @@ export default function DevPortfolio() {
         >
           <div className="flex items-center justify-between px-6 py-5 border-b border-orange-500/15">
             <div style={{ fontFamily: "'Courier New', monospace" }}>
-              <p className="text-orange-500 font-bold text-sm">&lt;MDA/&gt;</p>
+              <p className="text-orange-500 font-bold text-sm">&lt;MYDATAAPPLIED.COM/&gt;</p>
               <p className="text-gray-600 text-[10px] tracking-widest mt-0.5">
-                dev portfolio
+                DEVELOPER PORTFOLIO
               </p>
             </div>
             <motion.button
@@ -1758,7 +1758,7 @@ export default function DevPortfolio() {
                 className="text-xs text-orange-500 border border-orange-500/30 px-3 py-1.5 rounded-full tracking-widest"
                 style={{ fontFamily: "'Courier New', monospace" }}
               >
-                💻 Dev Portfolio
+                💻 Developer Portfolio
               </span>
             </div>
             <motion.button
@@ -1785,14 +1785,16 @@ export default function DevPortfolio() {
           </div>
         </motion.div>
 
-        {/* ── ABOUT (Change 1 + 2) ── */}
+        
+        
         <section
           id="about"
           className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-20 pt-20 sm:pt-24 pb-20 sm:pb-28 z-10"
         >
           <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[min(700px,90vw)] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
           <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
-            {/* LEFT: Text */}
+          
+          
             <div className="flex flex-col items-start text-left">
               <motion.span
                 initial={{ opacity: 0, y: 10 }}
@@ -1813,7 +1815,7 @@ export default function DevPortfolio() {
                 Hi, I'm <span className="text-orange-500">Shiv</span>
                 <br />
                 <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-normal mt-2 block">
-                  Full-Stack Developer
+                  Full-Stack Developer & Data Analyst
                 </span>
               </motion.h1>
               <motion.p
@@ -1830,7 +1832,7 @@ export default function DevPortfolio() {
                 undergraduate building practical, data-driven applications at
                 the intersection of development and analytics — using{" "}
                 <span className="text-orange-400">
-                  Python, SQL, and JavaScript
+                  React.js, Node.js, Express.js, Python, SQL, and JavaScript
                 </span>{" "}
                 to design structured systems, process real-world data, and
                 deliver interactive solutions.
@@ -1843,12 +1845,13 @@ export default function DevPortfolio() {
                 style={{ fontFamily: "'Courier New', monospace" }}
               >
                 My projects span data cleaning, analytical workflows, REST API
-                design, and responsive UI — all aimed at translating complex
+                design, and responsive UI - all aimed at translating complex
                 data into usable insights. I strengthen this with active{" "}
                 <span className="text-orange-400">DSA practice</span>, writing
                 optimised, scalable code for real-world reliability.
               </motion.p>
-              {/* Stat pills */}
+              
+              
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1857,9 +1860,9 @@ export default function DevPortfolio() {
               >
                 {[
                   { label: "Projects", value: "4+" },
-                  { label: "Certificates", value: "6" },
+                  { label: "Certificates", value: "6+" },
                   { label: "Languages", value: "5+" },
-                  { label: "Year", value: "Final Year" },
+                  { label: "Year", value: "Final Year Student" },
                 ].map((s) => (
                   <div
                     key={s.label}
@@ -1880,7 +1883,8 @@ export default function DevPortfolio() {
                   </div>
                 ))}
               </motion.div>
-              {/* Buttons */}
+              
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1912,7 +1916,7 @@ export default function DevPortfolio() {
               </motion.div>
             </div>
 
-            {/* RIGHT: Change 2 — Webpage/Code SVG illustration */}
+            
             <motion.div
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
@@ -1941,7 +1945,7 @@ export default function DevPortfolio() {
                     ease: "easeInOut",
                   }}
                 >
-                  {/* Browser window */}
+                  
                   <rect
                     x="20"
                     y="20"
@@ -1953,7 +1957,7 @@ export default function DevPortfolio() {
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
-                  {/* Top bar */}
+        
                   <rect
                     x="20"
                     y="20"
@@ -1969,7 +1973,7 @@ export default function DevPortfolio() {
                   <circle cx="44" cy="39" r="5" fill="#f97316" opacity="0.9" />
                   <circle cx="60" cy="39" r="5" fill="#f97316" opacity="0.45" />
                   <circle cx="76" cy="39" r="5" fill="#f97316" opacity="0.2" />
-                  {/* URL bar */}
+                  
                   <rect
                     x="100"
                     y="29"
@@ -2002,7 +2006,7 @@ export default function DevPortfolio() {
                     strokeOpacity="0.3"
                   />
 
-                  {/* Navbar inside browser */}
+                  
                   <rect
                     x="30"
                     y="65"
@@ -2020,7 +2024,7 @@ export default function DevPortfolio() {
                     fill="#f97316"
                     fontFamily="monospace"
                   >
-                    &lt;MDA/&gt;
+                    &lt;MYDATAAPPLIED.COM/&gt;
                   </text>
                   {["About", "Skills", "Projects", "Contact"].map((item, i) => (
                     <text
@@ -2036,7 +2040,7 @@ export default function DevPortfolio() {
                     </text>
                   ))}
 
-                  {/* Hero text block */}
+                  
                   <motion.text
                     x="48"
                     y="120"
@@ -2064,7 +2068,7 @@ export default function DevPortfolio() {
                     Full-Stack Developer & Data Analyst
                   </motion.text>
 
-                  {/* Paragraph lines */}
+                  
                   {[155, 168, 181].map((y, i) => (
                     <motion.rect
                       key={y}
@@ -2082,7 +2086,7 @@ export default function DevPortfolio() {
                     />
                   ))}
 
-                  {/* Two CTA buttons */}
+                  
                   <motion.rect
                     x="48"
                     y="196"
@@ -2132,7 +2136,7 @@ export default function DevPortfolio() {
                     Download CV
                   </text>
 
-                  {/* Divider */}
+                  
                   <line
                     x1="30"
                     y1="235"
@@ -2143,7 +2147,7 @@ export default function DevPortfolio() {
                     strokeOpacity="0.2"
                   />
 
-                  {/* Cards row */}
+                  
                   {[
                     { x: 30, label: "React.js", icon: "⚛" },
                     { x: 170, label: "Node.js", icon: "🟢" },
@@ -2201,7 +2205,7 @@ export default function DevPortfolio() {
                     </motion.g>
                   ))}
 
-                  {/* Code snippet */}
+                  
                   <rect
                     x="30"
                     y="328"
@@ -2248,7 +2252,8 @@ export default function DevPortfolio() {
                       {line.text}
                     </motion.text>
                   ))}
-                  {/* Blinking cursor */}
+                  
+                  
                   <motion.rect
                     x="44"
                     y="378"
@@ -2264,7 +2269,7 @@ export default function DevPortfolio() {
             </motion.div>
           </div>
 
-          {/* Scroll indicator */}
+          
           <motion.div
             className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20"
             animate={{ y: [0, 10, 0] }}
@@ -2291,7 +2296,7 @@ export default function DevPortfolio() {
           </motion.div>
         </section>
 
-        {/* ── SKILLS (Change 3) ── */}
+        
         <section id="skills" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
@@ -2310,7 +2315,7 @@ export default function DevPortfolio() {
                     items:
                       "React.js, Node.js, Express.js, Tailwind CSS, Bootstrap",
                   },
-                  { label: "Databases", items: "MySQL, MongoDB, PostgreSQL" },
+                  { label: "Databases", items: "MySQL, MongoDB, PostgreSQL, SQLite" },
                   {
                     label: "Dev Tools",
                     items:
@@ -2344,7 +2349,7 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        {/* ── CERTIFICATES (Change 4) ── */}
+        
         <section id="certificates" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
@@ -2365,7 +2370,7 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        {/* ── PROJECTS (Change 5) ── */}
+        
         <section id="projects" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
