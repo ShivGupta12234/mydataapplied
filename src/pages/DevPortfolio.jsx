@@ -2270,30 +2270,31 @@ export default function DevPortfolio() {
           </div>
 
           
-          <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <span
-              className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase"
-              style={{ fontFamily: "'Courier New', monospace" }}
-            >
-              scroll
-            </span>
-            <motion.div
-              className="w-[2px] h-8 bg-gradient-to-b from-orange-300 via-orange-500/80 to-transparent rounded-full"
-              animate={{ scaleY: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
-            />
-            <motion.div
-              animate={{ y: [0, 5, 0], opacity: [1, 0.3, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
-              className="text-orange-400 text-xs"
-            >
-              ▼
-            </motion.div>
-          </motion.div>
+          {/* Scroll indicator — bright */}
+                    <motion.div
+                      className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-1.5 z-20 pointer-events-none"
+                      animate={{ y: [0, 10, 0] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <span
+                        className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase"
+                        style={{ fontFamily: "'Courier New', monospace" }}
+                      >
+                        scroll
+                      </span>
+                      <motion.div
+                        className="w-[2px] h-8 bg-gradient-to-b from-orange-300 via-orange-500/80 to-transparent rounded-full"
+                        animate={{ scaleY: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
+                        transition={{ duration: 1.8, repeat: Infinity }}
+                      />
+                      <motion.div
+                        animate={{ y: [0, 5, 0], opacity: [1, 0.3, 1] }}
+                        transition={{ duration: 1.8, repeat: Infinity }}
+                        className="text-orange-400 text-xs"
+                      >
+                        &#9660;
+                      </motion.div>
+                    </motion.div>
         </section>
 
         

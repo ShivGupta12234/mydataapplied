@@ -2094,7 +2094,7 @@ export default function DataPortfolio() {
 
           {/* Scroll indicator — bright */}
           <motion.div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-20"
+            className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-1.5 z-20 pointer-events-none"
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
           >
