@@ -2525,7 +2525,7 @@ export default function DataPortfolio() {
             style={{ fontFamily: "'Courier New', monospace" }}
           >
             ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash
-            Gupta - MYDATAAPPLIED.COM - Data Portfolio
+            Gupta - MYDATAAPPLIED.COM - Analytics Portfolio
           </p>
         </footer>
       </div>
