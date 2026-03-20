@@ -392,8 +392,8 @@ export default function Landing() {
             className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto justify-center items-center"
           >
             {[
-              { label: "📊 Analytics Portfolio", route: "/data", filled: false },
-              { label: "💻 Developer Portfolio",  route: "/dev",  filled: true  },
+              { label: "📊 View Analytics Portfolio", route: "/data", filled: false },
+              { label: "💻 View Developer Portfolio",  route: "/dev",  filled: true  },
             ].map(({ label, route, filled }) => (
               <motion.button key={route}
                 onHoverStart={() => setHovered(route)}
