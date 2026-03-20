@@ -1273,7 +1273,7 @@ function DevLoader({ onDone }) {
             className="text-orange-500 text-[11px] tracking-[0.45em] uppercase"
             style={{ fontFamily: "'Courier New',monospace" }}
           >
-            DEVELOPER PORTFOLIO LOADING...
+            DEVELOPMENT PORTFOLIO LOADING...
           </p>
         </motion.div>
 
@@ -1648,7 +1648,7 @@ export default function DevPortfolio() {
               className="hidden lg:flex text-xs text-orange-500 border border-orange-500/30 px-3 py-1.5 rounded-full tracking-widest"
               style={{ fontFamily: "'Courier New', monospace" }}
             >
-              💻 Developer Portfolio
+              💻 Development Portfolio
             </div>
 
             <motion.button
@@ -1706,7 +1706,7 @@ export default function DevPortfolio() {
                 &lt;MYDATAAPPLIED.COM/&gt;
               </p>
               <p className="text-gray-600 text-[10px] tracking-widest mt-0.5">
-                DEVELOPER PORTFOLIO
+                DEVELOPMENT PORTFOLIO
               </p>
             </div>
             <motion.button
@@ -1801,7 +1801,7 @@ export default function DevPortfolio() {
                 className="text-xs text-orange-500 border border-orange-500/30 px-3 py-1.5 rounded-full tracking-widest"
                 style={{ fontFamily: "'Courier New', monospace" }}
               >
-                💻 Developer Portfolio
+                💻 Development Portfolio
               </span>
             </div>
             <motion.button
@@ -2029,7 +2029,7 @@ export default function DevPortfolio() {
                     opacity="0.55"
                     fontFamily="monospace"
                   >
-                    mydataapplied.com
+                    mydataapplied.com/dev
                   </text>
                   <line
                     x1="20"
@@ -2526,7 +2526,7 @@ export default function DevPortfolio() {
                   {
                     level: "Intermediate (Class XII)",
                     icon: "📘",
-                    degree: "CBSE — Science Stream",
+                    degree: "CBSE - Science Stream",
                     stream:
                       "Physics, Chemistry, Mathematics & Computer Science",
                     institution: "Doon International School, Kanpur",
@@ -2551,7 +2551,7 @@ export default function DevPortfolio() {
                   {
                     level: "High School (Class X)",
                     icon: "📗",
-                    degree: "ICSE — General Stream",
+                    degree: "ICSE - General Stream",
                     stream: "Science, Mathematics & English",
                     institution: "Mercy Memorial School, Kanpur",
                     grade: "82.4%",
@@ -2703,7 +2703,7 @@ export default function DevPortfolio() {
             style={{ fontFamily: "'Courier New', monospace" }}
           >
             ALL COPYRIGHTS © {new Date().getFullYear()} Shiv Prakash Gupta -
-            MYDATAAPPLIED.COM - Developer Portfolio
+            MYDATAAPPLIED.COM - Development Portfolio
           </p>
         </footer>
       </div>

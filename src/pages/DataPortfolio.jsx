@@ -2338,7 +2338,7 @@ export default function DataPortfolio() {
                   {
                     level: "Intermediate (Class XII)",
                     icon: "📘",
-                    degree: "CBSE — Science Stream",
+                    degree: "CBSE - Science Stream",
                     stream:
                       "Physics, Chemistry, Mathematics & Computer Science",
                     institution: "Doon International School, Kanpur",
@@ -2363,7 +2363,7 @@ export default function DataPortfolio() {
                   {
                     level: "High School (Class X)",
                     icon: "📗",
-                    degree: "ICSE — General Stream",
+                    degree: "ICSE - General Stream",
                     stream: "Science, Mathematics & English",
                     institution: "Mercy Memorial School, Kanpur",
                     grade: "82.4%",
