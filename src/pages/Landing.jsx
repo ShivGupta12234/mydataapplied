@@ -339,7 +339,7 @@ export default function Landing() {
             className="text-orange-400 text-[12px] font-semibold uppercase tracking-[0.4em]"
             style={{ fontFamily: "'Courier New', monospace" }}
           >
-            // portfolio
+            // Personal Portfolio Website
           </motion.p>
 
           {/* Decorative line */}
@@ -393,7 +393,7 @@ export default function Landing() {
           >
             {[
               { label: "📊 View Analytics Portfolio", route: "/data", filled: false },
-              { label: "💻 View Developer Portfolio",  route: "/dev",  filled: true  },
+              { label: "💻 View Development Portfolio",  route: "/dev",  filled: true  },
             ].map(({ label, route, filled }) => (
               <motion.button key={route}
                 onHoverStart={() => setHovered(route)}
