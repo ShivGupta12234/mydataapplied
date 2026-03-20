@@ -59,13 +59,20 @@ const SKILLS = [
 const CERTIFICATES = [
   {
     id: 1,
-    title: "Learn Complete JavaScript",
-    issuer: "Scrimba",
-    link: "https://scrimba.com/learn-javascript-c0v",
+    title: "Developing Back-End Apps with Node.js and Express",
+    issuer: "Coursera/IBM",
+    link: "https://www.coursera.org/account/accomplishments/verify/3IR3LMWTJLD3",
     gradient: "from-yellow-500/25 to-yellow-900/10",
     borderColor: "border-yellow-500/30",
     icon: "🟨",
-    skills: ["JavaScript", "ES6+", "DOM", "Async/Await"],
+    skills: [
+      "Node.js",
+      "Express",
+      "RESTful APIs",
+      "JWT Auth",
+      "Middlewares",
+      "JSON",
+    ],
   },
   {
     id: 2,
@@ -123,21 +130,21 @@ const CERTIFICATES = [
   },
 ];
 
-/* ── Change 5: Real Projects ── */
+
 const PROJECTS = [
   {
     id: 4,
     title: "Aagam Designs",
     subtitle: "Freelance Client - Architectural Firm Website",
     description:
-      "A live client website built for Aagam Designs - an architectural and interior design firm. Freelance project delivering a clean, professional web presence with project showcases, service highlights, and a fully responsive layout. Deployed and live at aagamdesigns.com.",
+      "A live client website built for Aagam Designs - an architectural and interior design firm. Freelance project delivering a clean, professional web presence with project showcases, service highlights, and a fully responsive layout. Deployed and live @aagamdesigns.com.",
     url: "https://aagamdesigns.com/",
     liveUrl: "https://aagamdesigns.com/",
     gradient: "from-emerald-500/20 to-teal-900/10",
     borderColor: "border-emerald-500/30",
     glowColor: "rgba(16,185,129,0.12)",
     accentColor: "text-emerald-400",
-    tech: ["React", "Vite", "JavaScript", "CSS", "HTML", "Vercel"],
+    tech: ["React", "Vite", "JavaScript", "TailwindCSS", "Framer Motion","React Router", "Vercel"],
     icon: "🏛️",
     status: "Freelance · Live",
     statusColor: "text-emerald-400 border-emerald-500/40 bg-emerald-500/10",
@@ -154,26 +161,66 @@ const PROJECTS = [
     borderColor: "border-orange-500/30",
     glowColor: "rgba(249,115,22,0.12)",
     accentColor: "text-orange-400",
-    tech: ["React", "Tailwind CSS", "Framer Motion", "Vite", "JSX"],
+    tech: ["React", "Vite", "JavaScript", "TailwindCSS", "Framer Motion","React Router", "Vercel"],
     icon: "🌐",
     status: "Live",
     statusColor: "text-orange-400 border-orange-500/40 bg-orange-500/10",
   },
   {
     id: 1,
-    title: "AI Health Prediction App",
+    title: "AI Health Prediction Application",
     subtitle: "ai-health-prediction-application",
     description:
-      "An AI-powered disease prediction system that performs EDA on 20+ health variables, builds ML models, and presents risk distribution (low/medium/high) through an interactive Power BI dashboard.",
+      "A full-stack AI-powered healthcare application that predicts 14+ diseases, assesses mortality risk in real-time, and delivers personalized health recommendations - built as a major academic project at PSIT, Kanpur.",
     url: "https://github.com/ShivGupta12234/ai-health-prediction-application",
     gradient: "from-red-500/20 to-orange-900/10",
     borderColor: "border-red-500/30",
     glowColor: "rgba(239,68,68,0.12)",
     accentColor: "text-red-400",
-    tech: ["Python", "Power BI", "SQL", "ML", "EDA", "Git"],
-    icon: "🧠",
+    tech: [
+      "Node.js",
+      "Express.js",
+      "React.js",
+      "Vite",
+      "Axios",
+      "JavaScript",
+      "RESTful APIs",
+      "JWT Auth",
+      "Bcrypt",
+      "Middlewares",
+      "MongoDB",
+      "Mongoose",
+      "Hugging Face API",
+      "Recharts.js",
+      "Role-Based Access Control",
+    ],
+    icon: "🩺",
     status: "Completed",
     statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
+  },
+  {
+    id: 5,
+    title: "Express Book Reviews API",
+    subtitle: "Backend Project for IBM Node.js Course",
+    description:
+      "Express Book Reviews is a Node.js/Express.js (final-project), forked from IBM's Developer Skills Network. It implements a book review web application with a structured backend featuring routes, controllers, middleware, and utility modules - all written in JavaScript.",
+    url: "https://github.com/ShivGupta12234/expressBookReviews",
+    gradient: "from-emerald-500/20 to-teal-900/10",
+    borderColor: "border-emerald-500/30",
+    glowColor: "rgba(16,185,129,0.12)",
+    accentColor: "text-emerald-400",
+    tech: [
+      "Node.js",
+      "Express.js",
+      "JavaScript",
+      "RESTful APIs",
+      "JWT Auth",
+      "Middlewares",
+      "MVC Structure",
+    ],
+    icon: "📚",
+    status: "Completed",
+    statusColor: "text-emerald-400 border-emerald-500/40 bg-emerald-500/10",
   },
   {
     id: 2,
@@ -186,7 +233,7 @@ const PROJECTS = [
     borderColor: "border-blue-500/30",
     glowColor: "rgba(59,130,246,0.12)",
     accentColor: "text-blue-400",
-    tech: ["React", "Node.js", "Python", "SQL", "REST API"],
+    tech: ["React", "Node.js", "Python", "SQL", "REST API", "Vite"],
     icon: "📈",
     status: "Completed",
     statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
@@ -1172,7 +1219,6 @@ function DevLoader({ onDone }) {
       exit={{ opacity: 0, scale: 1.02 }}
       transition={{ duration: 0.6, ease: "easeInOut" }}
     >
-      
       <div
         className="absolute inset-0 pointer-events-none z-10 opacity-[0.035]"
         style={{
@@ -1180,7 +1226,7 @@ function DevLoader({ onDone }) {
             "repeating-linear-gradient(0deg,transparent,transparent 2px,#f97316 2px,#f97316 3px)",
         }}
       />
-      
+
       <div className="absolute inset-0 opacity-[0.04] pointer-events-none">
         <div
           style={{
@@ -1191,7 +1237,7 @@ function DevLoader({ onDone }) {
           className="w-full h-full"
         />
       </div>
-      
+
       <AnimatePresence>
         {glitch && (
           <motion.div
@@ -1202,9 +1248,8 @@ function DevLoader({ onDone }) {
           />
         )}
       </AnimatePresence>
-      
+
       <div className="relative z-10 flex flex-col items-center gap-8 px-6 w-full max-w-lg">
-        
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1231,7 +1276,7 @@ function DevLoader({ onDone }) {
             DEVELOPER PORTFOLIO LOADING...
           </p>
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -1386,7 +1431,6 @@ export default function DevPortfolio() {
           />
         </div>
 
-        
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -1495,7 +1539,6 @@ export default function DevPortfolio() {
           />
         </motion.div>
 
-        
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -1563,7 +1606,6 @@ export default function DevPortfolio() {
           />
         </motion.div>
 
-        
         <motion.nav
           initial={{ y: -80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -1608,7 +1650,7 @@ export default function DevPortfolio() {
             >
               💻 Developer Portfolio
             </div>
-            
+
             <motion.button
               whileHover={{ scale: 1.08 }}
               whileTap={{ scale: 0.93 }}
@@ -1641,7 +1683,6 @@ export default function DevPortfolio() {
           </div>
         </motion.nav>
 
-        
         <motion.div
           initial={false}
           animate={
@@ -1661,7 +1702,9 @@ export default function DevPortfolio() {
         >
           <div className="flex items-center justify-between px-6 py-5 border-b border-orange-500/15">
             <div style={{ fontFamily: "'Courier New', monospace" }}>
-              <p className="text-orange-500 font-bold text-sm">&lt;MYDATAAPPLIED.COM/&gt;</p>
+              <p className="text-orange-500 font-bold text-sm">
+                &lt;MYDATAAPPLIED.COM/&gt;
+              </p>
               <p className="text-gray-600 text-[10px] tracking-widest mt-0.5">
                 DEVELOPER PORTFOLIO
               </p>
@@ -1785,16 +1828,12 @@ export default function DevPortfolio() {
           </div>
         </motion.div>
 
-        
-        
         <section
           id="about"
           className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-20 pt-20 sm:pt-24 pb-20 sm:pb-28 z-10"
         >
           <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[min(700px,90vw)] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
           <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
-          
-          
             <div className="flex flex-col items-start text-left">
               <motion.span
                 initial={{ opacity: 0, y: 10 }}
@@ -1815,7 +1854,7 @@ export default function DevPortfolio() {
                 Hi, I'm <span className="text-orange-500">Shiv</span>
                 <br />
                 <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-normal mt-2 block">
-                  Full-Stack Developer & Data Analyst
+                  Full-Stack Developer
                 </span>
               </motion.h1>
               <motion.p
@@ -1850,8 +1889,7 @@ export default function DevPortfolio() {
                 <span className="text-orange-400">DSA practice</span>, writing
                 optimised, scalable code for real-world reliability.
               </motion.p>
-              
-              
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1883,7 +1921,6 @@ export default function DevPortfolio() {
                   </div>
                 ))}
               </motion.div>
-              
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -1904,8 +1941,8 @@ export default function DevPortfolio() {
                   View Projects →
                 </motion.button>
                 <motion.a
-                  href="/shiv_prakash_gupta_CV.pdf"
-                  download="Shiv_Prakash_Gupta_CV.pdf"
+                  href="/shiv_prakash_gupta_resume.pdf"
+                  download="Shiv_Prakash_Gupta_resume.pdf"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
                   className="px-6 sm:px-8 py-3 border border-orange-500 text-orange-500 font-bold tracking-widest uppercase text-xs hover:bg-orange-500/10 transition-all inline-flex items-center justify-center gap-2"
@@ -1916,7 +1953,6 @@ export default function DevPortfolio() {
               </motion.div>
             </div>
 
-            
             <motion.div
               initial={{ opacity: 0, x: 60 }}
               animate={{ opacity: 1, x: 0 }}
@@ -1945,7 +1981,6 @@ export default function DevPortfolio() {
                     ease: "easeInOut",
                   }}
                 >
-                  
                   <rect
                     x="20"
                     y="20"
@@ -1957,7 +1992,7 @@ export default function DevPortfolio() {
                     strokeWidth="1"
                     strokeOpacity="0.3"
                   />
-        
+
                   <rect
                     x="20"
                     y="20"
@@ -1973,7 +2008,7 @@ export default function DevPortfolio() {
                   <circle cx="44" cy="39" r="5" fill="#f97316" opacity="0.9" />
                   <circle cx="60" cy="39" r="5" fill="#f97316" opacity="0.45" />
                   <circle cx="76" cy="39" r="5" fill="#f97316" opacity="0.2" />
-                  
+
                   <rect
                     x="100"
                     y="29"
@@ -2006,7 +2041,6 @@ export default function DevPortfolio() {
                     strokeOpacity="0.3"
                   />
 
-                  
                   <rect
                     x="30"
                     y="65"
@@ -2040,7 +2074,6 @@ export default function DevPortfolio() {
                     </text>
                   ))}
 
-                  
                   <motion.text
                     x="48"
                     y="120"
@@ -2065,10 +2098,9 @@ export default function DevPortfolio() {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.15 }}
                   >
-                    Full-Stack Developer & Data Analyst
+                    Full-Stack Developer
                   </motion.text>
 
-                  
                   {[155, 168, 181].map((y, i) => (
                     <motion.rect
                       key={y}
@@ -2086,7 +2118,6 @@ export default function DevPortfolio() {
                     />
                   ))}
 
-                  
                   <motion.rect
                     x="48"
                     y="196"
@@ -2136,7 +2167,6 @@ export default function DevPortfolio() {
                     Download CV
                   </text>
 
-                  
                   <line
                     x1="30"
                     y1="235"
@@ -2147,7 +2177,6 @@ export default function DevPortfolio() {
                     strokeOpacity="0.2"
                   />
 
-                  
                   {[
                     { x: 30, label: "React.js", icon: "⚛" },
                     { x: 170, label: "Node.js", icon: "🟢" },
@@ -2205,7 +2234,6 @@ export default function DevPortfolio() {
                     </motion.g>
                   ))}
 
-                  
                   <rect
                     x="30"
                     y="328"
@@ -2252,8 +2280,7 @@ export default function DevPortfolio() {
                       {line.text}
                     </motion.text>
                   ))}
-                  
-                  
+
                   <motion.rect
                     x="44"
                     y="378"
@@ -2269,35 +2296,33 @@ export default function DevPortfolio() {
             </motion.div>
           </div>
 
-          
           {/* Scroll indicator — bright */}
-                    <motion.div
-                      className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-1.5 z-20 pointer-events-none"
-                      animate={{ y: [0, 10, 0] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <span
-                        className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase"
-                        style={{ fontFamily: "'Courier New', monospace" }}
-                      >
-                        scroll
-                      </span>
-                      <motion.div
-                        className="w-[2px] h-8 bg-gradient-to-b from-orange-300 via-orange-500/80 to-transparent rounded-full"
-                        animate={{ scaleY: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
-                        transition={{ duration: 1.8, repeat: Infinity }}
-                      />
-                      <motion.div
-                        animate={{ y: [0, 5, 0], opacity: [1, 0.3, 1] }}
-                        transition={{ duration: 1.8, repeat: Infinity }}
-                        className="text-orange-400 text-xs"
-                      >
-                        &#9660;
-                      </motion.div>
-                    </motion.div>
+          <motion.div
+            className="absolute bottom-8 left-0 right-0 flex flex-col items-center gap-1.5 z-20 pointer-events-none"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <span
+              className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase"
+              style={{ fontFamily: "'Courier New', monospace" }}
+            >
+              scroll
+            </span>
+            <motion.div
+              className="w-[2px] h-8 bg-gradient-to-b from-orange-300 via-orange-500/80 to-transparent rounded-full"
+              animate={{ scaleY: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
+            />
+            <motion.div
+              animate={{ y: [0, 5, 0], opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
+              className="text-orange-400 text-xs"
+            >
+              &#9660;
+            </motion.div>
+          </motion.div>
         </section>
 
-        
         <section id="skills" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
@@ -2316,7 +2341,10 @@ export default function DevPortfolio() {
                     items:
                       "React.js, Node.js, Express.js, Tailwind CSS, Bootstrap",
                   },
-                  { label: "Databases", items: "MySQL, MongoDB, PostgreSQL, SQLite" },
+                  {
+                    label: "Databases",
+                    items: "MySQL, MongoDB, PostgreSQL, SQLite",
+                  },
                   {
                     label: "Dev Tools",
                     items:
@@ -2350,7 +2378,6 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        
         <section id="certificates" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
@@ -2371,7 +2398,6 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        
         <section id="projects" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
@@ -2676,7 +2702,8 @@ export default function DevPortfolio() {
             className="text-orange-400/80 text-[11px] tracking-widest"
             style={{ fontFamily: "'Courier New', monospace" }}
           >
-          ALL COPYRIGHTS  © {new Date().getFullYear()} Shiv Prakash Gupta - MYDATAAPPLIED.COM - Developer Portfolio
+            ALL COPYRIGHTS © {new Date().getFullYear()} Shiv Prakash Gupta -
+            MYDATAAPPLIED.COM - Developer Portfolio
           </p>
         </footer>
       </div>
