@@ -1843,7 +1843,7 @@ export default function DataPortfolio() {
                     opacity="0.55"
                     fontFamily="monospace"
                   >
-                    analytics_dashboard.py/data
+                    mydataapplied.com/data
                   </text>
                   <line
                     x1="20"
