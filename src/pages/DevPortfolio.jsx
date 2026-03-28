@@ -1479,7 +1479,7 @@ export default function DevPortfolio() {
                 ),
               },
               {
-                href: "https://www.instagram.com/shivguptasig/",
+                href: "https://www.instagram.com/shiva.prakash.gupta/",
                 label: "Instagram",
                 svg: (
                   <svg
