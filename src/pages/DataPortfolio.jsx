@@ -1255,7 +1255,7 @@ export default function DataPortfolio() {
                 ),
               },
               {
-                href: "https://www.instagram.com/",
+                href: "https://www.instagram.com/shivguptasig/",
                 label: "Instagram",
                 svg: (
                   <svg
@@ -1703,7 +1703,7 @@ export default function DataPortfolio() {
                 Hi, I'm <span className="text-orange-500">Shiv</span>
                 <br />
                 <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-normal mt-2 block">
-                  Data Analyst &amp; Developer
+                 Aspiring Data Analyst
                 </span>
               </motion.h1>
 
@@ -1843,7 +1843,7 @@ export default function DataPortfolio() {
                     opacity="0.55"
                     fontFamily="monospace"
                   >
-                    data_dashboard.py
+                    analytics_dashboard.py/data
                   </text>
                   <line
                     x1="20"

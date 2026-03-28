@@ -1479,7 +1479,7 @@ export default function DevPortfolio() {
                 ),
               },
               {
-                href: "https://www.instagram.com/",
+                href: "https://www.instagram.com/shivguptasig/",
                 label: "Instagram",
                 svg: (
                   <svg
@@ -1854,7 +1854,7 @@ export default function DevPortfolio() {
                 Hi, I'm <span className="text-orange-500">Shiv</span>
                 <br />
                 <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-normal mt-2 block">
-                  Full-Stack Developer
+                  Aspiring Full-Stack Developer
                 </span>
               </motion.h1>
               <motion.p
@@ -1899,7 +1899,7 @@ export default function DevPortfolio() {
                 {[
                   { label: "Projects", value: "4+" },
                   { label: "Certificates", value: "6+" },
-                  { label: "Languages", value: "5+" },
+                  { label: "Platforms", value: "4" },
                   { label: "Year", value: "Final Year Student" },
                 ].map((s) => (
                   <div
