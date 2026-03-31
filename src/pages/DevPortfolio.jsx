@@ -1492,7 +1492,7 @@ export default function DevPortfolio() {
                 ),
               },
               {
-                href: "https://x.com/",
+                href: "https://x.com/shivagupta2003",
                 label: "X",
                 svg: (
                   <svg
