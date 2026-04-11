@@ -173,6 +173,7 @@ const PROJECTS = [
     description:
       "A full-stack AI-powered healthcare application that predicts 14+ diseases, assesses mortality risk in real-time, and delivers personalized health recommendations - built as a major academic project at PSIT, Kanpur.",
     url: "https://github.com/ShivGupta12234/ai-health-prediction-application",
+    liveUrl: "https://healthmateai-app.vercel.app/",
     gradient: "from-red-500/20 to-orange-900/10",
     borderColor: "border-red-500/30",
     glowColor: "rgba(239,68,68,0.12)",
@@ -195,7 +196,7 @@ const PROJECTS = [
       "Role-Based Access Control",
     ],
     icon: "🩺",
-    status: "Completed",
+    status: "Completed · Live",
     statusColor: "text-green-400 border-green-500/40 bg-green-500/10",
   },
   {
