@@ -419,7 +419,7 @@ function LandingLoader({ onDone }) {
           style={{ fontFamily: MONO }}
         >
           <span className="text-orange-500 font-black text-3xl sm:text-4xl">&lt;</span>
-          <span className="text-white font-black text-3xl sm:text-4xl tracking-tight">MYDATAAPPLIED.COM</span>
+          <span className="text-white font-black text-3xl sm:text-4xl tracking-tight">MYDATAAPPLIED</span>
           <span className="text-orange-500 font-black text-3xl sm:text-4xl">.</span>
           <span className="text-white font-black text-3xl sm:text-4xl tracking-tight">COM</span>
           <span className="text-orange-500 font-black text-3xl sm:text-4xl">/&gt;</span>
