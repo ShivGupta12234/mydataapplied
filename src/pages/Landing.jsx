@@ -1,8 +1,264 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import {
+  // eslint-disable-next-line no-unused-vars
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 
-/* ── Constellation: fixed stars + animated connecting lines ── */
+
+const MONO = "'JetBrains Mono', 'Fira Code', 'Courier New', monospace";
+
+
+function usePagePolish() {
+  useEffect(() => {
+    if (!document.getElementById("mda-font-jetbrains")) {
+      const link = document.createElement("link");
+      link.id = "mda-font-jetbrains";
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap";
+      document.head.appendChild(link);
+    }
+    if (!document.getElementById("mda-global-polish")) {
+      const style = document.createElement("style");
+      style.id = "mda-global-polish";
+      style.innerHTML = `
+        ::selection { background: rgba(249,115,22,0.35); color: #ffffff; }
+        ::-webkit-scrollbar { width: 9px; height: 9px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#f97316,#9a3412); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fb923c; }
+        html { scroll-behavior: smooth; }
+        *:focus-visible { outline: 2px solid #f97316; outline-offset: 3px; border-radius: 4px; }
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+}
+
+
+function GrainOverlay() {
+  return (
+    <svg
+      className="fixed inset-0 w-full h-full pointer-events-none z-[1] opacity-[0.03] mix-blend-overlay"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <filter id="mda-grain">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.85"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#mda-grain)" />
+    </svg>
+  );
+}
+
+
+
+function MagneticWrap({ children, className = "", strength = 0.3 }) {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 150, damping: 14, mass: 0.2 });
+  const springY = useSpring(y, { stiffness: 150, damping: 14, mass: 0.2 });
+
+  const onMouseMove = (e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    x.set((e.clientX - rect.left - rect.width / 2) * strength);
+    y.set((e.clientY - rect.top - rect.height / 2) * strength);
+  };
+  const onMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ x: springX, y: springY }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+
+
+
+function useTiltRef(max = 8) {
+  const ref = useRef(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRX = useSpring(rotateX, { stiffness: 280, damping: 26, mass: 0.6 });
+  const springRY = useSpring(rotateY, { stiffness: 280, damping: 26, mass: 0.6 });
+  const onMouseMove = (e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    rotateY.set(px * max);
+    rotateX.set(-py * max);
+  };
+  const onMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+  return { ref, rotateX: springRX, rotateY: springRY, onMouseMove, onMouseLeave };
+}
+
+
+function PathCard({ icon, text, route, filled, navigate, delay }) {
+  const { ref, rotateX, rotateY, onMouseMove, onMouseLeave } = useTiltRef(7);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay, ease: "easeOut" }}
+      className="w-full"
+    >
+      <MagneticWrap strength={0.12} className="w-full">
+        <motion.button
+          ref={ref}
+          type="button"
+          onMouseMove={onMouseMove}
+          onMouseLeave={onMouseLeave}
+          onClick={() => navigate(route)}
+          whileHover={{
+            y: -6,
+            scale: 1.015,
+            boxShadow: filled
+              ? "0 24px 60px rgba(249,115,22,0.35)"
+              : "0 24px 60px rgba(0,0,0,0.5)",
+          }}
+          whileTap={{ scale: 0.97 }}
+          style={{ rotateX, rotateY, transformPerspective: 800 }}
+          className={`group relative w-full text-left rounded-2xl border overflow-hidden cursor-pointer
+            px-6 py-7 sm:px-7 sm:py-8 flex flex-col items-start gap-3 transition-colors duration-300
+            ${
+              filled
+                ? "bg-orange-500 border-orange-400 hover:bg-orange-400"
+                : "bg-orange-500/5 border-orange-500/25 hover:bg-orange-500/10 hover:border-orange-500/50"
+            }`}
+        >
+          {/* Shine sweep */}
+          <span className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-12 pointer-events-none" />
+
+          <span
+            className={`relative z-10 w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
+              filled
+                ? "bg-black/10"
+                : "bg-orange-500/15 border border-orange-500/30"
+            }`}
+          >
+            {icon}
+          </span>
+
+          <span
+            className={`relative z-10 font-black tracking-wide text-sm sm:text-base uppercase leading-snug ${
+              filled ? "text-black" : "text-white"
+            }`}
+            style={{ fontFamily: MONO }}
+          >
+            {text}
+          </span>
+
+          <span
+            className={`relative z-10 text-[10px] tracking-[0.3em] uppercase ${
+              filled ? "text-black/55" : "text-orange-400/70"
+            }`}
+            style={{ fontFamily: MONO }}
+          >
+            mydataapplied.com{route}
+          </span>
+
+          <motion.span
+            className={`relative z-10 mt-1 inline-flex items-center gap-1.5 text-xs font-bold ${
+              filled ? "text-black" : "text-orange-400"
+            }`}
+            style={{ fontFamily: MONO }}
+            animate={{ x: [0, 4, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity }}
+          >
+            Enter →
+          </motion.span>
+        </motion.button>
+      </MagneticWrap>
+    </motion.div>
+  );
+}
+
+
+
+function AuroraMesh({ followX, followY }) {
+  return (
+    <>
+      <motion.div
+        className="absolute inset-0 m-auto w-[700px] h-[700px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(249,115,22,0.18) 0%, rgba(249,115,22,0.06) 50%, transparent 75%)",
+          x: followX,
+          y: followY,
+        }}
+        animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute top-[18%] left-[12%] w-[420px] h-[420px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(251,146,60,0.13) 0%, transparent 70%)",
+        }}
+        animate={{
+          x: [0, 60, -30, 0],
+          y: [0, -40, 30, 0],
+          opacity: [0.35, 0.65, 0.35],
+        }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[14%] right-[10%] w-[380px] h-[380px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(234,88,12,0.11) 0%, transparent 70%)",
+        }}
+        animate={{
+          x: [0, -50, 40, 0],
+          y: [0, 30, -50, 0],
+          opacity: [0.25, 0.55, 0.25],
+        }}
+        transition={{
+          duration: 17,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+      />
+    </>
+  );
+}
+
+
 function Constellation() {
   const [dims, setDims] = useState({ w: 1440, h: 900 });
   useEffect(() => {
@@ -57,7 +313,7 @@ function Constellation() {
   );
 }
 
-/* ── Floating data glyphs ── */
+
 function DataGlyphs() {
   const glyphs = [
     { text: "{ }", x: "8%",  y: "15%", size: "text-xs",  delay: 0.5 },
@@ -78,7 +334,7 @@ function DataGlyphs() {
       {glyphs.map((g, i) => (
         <motion.span key={i}
           className={`absolute ${g.size} font-bold text-orange-500/20 select-none pointer-events-none hidden sm:block`}
-          style={{ left: g.x, top: g.y, fontFamily: "'Courier New', monospace" }}
+          style={{ left: g.x, top: g.y, fontFamily: MONO }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: [0.1, 0.35, 0.1], y: [0, -12, 0] }}
           transition={{ duration: 5 + i * 0.3, delay: g.delay, repeat: Infinity, ease: "easeInOut" }}
@@ -90,31 +346,7 @@ function DataGlyphs() {
   );
 }
 
-/* ── Radial pulse rings from centre ── */
-function PulseRings() {
-  return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-      {[0, 1, 2, 3].map(i => (
-        <motion.div key={i}
-          className="absolute rounded-full border border-orange-500/10"
-          style={{ inset: -(i * 120 + 80) }}
-          initial={{ opacity: 0, scale: 0.6 }}
-          animate={{ opacity: [0, 0.45, 0], scale: [0.7, 1.1, 1.4] }}
-          transition={{ duration: 4.5, delay: i * 1.1, repeat: Infinity, ease: "easeOut" }}
-        />
-      ))}
-      {/* Bright core */}
-      <motion.div
-        className="absolute rounded-full bg-orange-500"
-        style={{ inset: -4 }}
-        animate={{ opacity: [0.6, 1, 0.6], scale: [1, 1.4, 1] }}
-        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
-}
 
-/* ── Scanline sweep ── */
 function ScanLine() {
   return (
     <motion.div
@@ -122,141 +354,128 @@ function ScanLine() {
       style={{ background: "linear-gradient(90deg, transparent 0%, rgba(249,115,22,0.35) 30%, rgba(249,115,22,0.7) 50%, rgba(249,115,22,0.35) 70%, transparent 100%)" }}
       initial={{ top: "-2px" }}
       animate={{ top: ["0%", "100%"] }}
-      transition={{ duration: 7, repeat: Infinity, ease: "linear", repeatDelay: 2 }}
+      transition={{ duration: 9, repeat: Infinity, ease: "linear", repeatDelay: 6 }}
     />
   );
 }
 
-/* ── LandingLoader: intro sequence before the page reveals ── */
+
+
+
 function LandingLoader({ onDone }) {
-  const [phase, setPhase] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 600);
-    const t2 = setTimeout(() => setPhase(2), 1800);
-    const t3 = setTimeout(() => setPhase(3), 2200);
-    const t4 = setTimeout(() => onDone(),    2800);
-    return () => [t1,t2,t3,t4].forEach(clearTimeout);
+    const tick = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 100) {
+          clearInterval(tick);
+          return 100;
+        }
+        return p + (p < 70 ? 2.4 : 1.2);
+      });
+    }, 26);
+    const done = setTimeout(() => onDone(), 2100);
+    return () => {
+      clearInterval(tick);
+      clearTimeout(done);
+    };
   }, []);
 
-  const LOGO_CHARS = ['<','M','D','A','.',  'C','O','M','/','>'];
-  const LOGO_COLORS = ch => ['<','/','>', '.'].includes(ch) ? '#f97316' : '#ffffff';
-
-  const particles = Array.from({ length: 24 }, (_, i) => {
-    const angle  = (i / 24) * Math.PI * 2;
-    const radius = 55 + Math.random() * 35;
-    return {
-      startX: Math.cos(angle) * (window.innerWidth  * 0.55),
-      startY: Math.sin(angle) * (window.innerHeight * 0.45),
-      endX:   Math.cos(angle) * radius,
-      endY:   Math.sin(angle) * radius,
-      size:   Math.random() * 3 + 1.5,
-      delay:  i * 0.02,
-    };
-  });
+  
 
   return (
     <motion.div
       className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden"
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.55, ease: 'easeInOut' }}
+      exit={{ opacity: 0, scale: 1.04, filter: "blur(6px)" }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
     >
-      {/* Grid bg */}
-      <div className="absolute inset-0 opacity-[0.06] pointer-events-none">
-        <div style={{ backgroundImage:'linear-gradient(#f97316 1px,transparent 1px),linear-gradient(90deg,#f97316 1px,transparent 1px)', backgroundSize:'60px 60px' }} className="w-full h-full"/>
-      </div>
-
-      {/* Flash on phase 2 */}
-      <AnimatePresence>
-        {phase >= 2 && (
-          <motion.div
-            className="absolute inset-0 bg-orange-500 pointer-events-none z-30"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: phase === 2 ? [0, 0.18, 0] : 0 }}
-            transition={{ duration: 0.4 }}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Converging particles */}
-      {particles.map((p, i) => (
-        <motion.div key={i}
-          className="absolute rounded-full bg-orange-500 pointer-events-none"
-          style={{ width: p.size, height: p.size }}
-          initial={{ x: p.startX, y: p.startY, opacity: 0 }}
-          animate={
-            phase === 0
-              ? { x: p.startX, y: p.startY, opacity: [0, 0.7, 0.4] }
-              : phase >= 1
-              ? { x: p.endX, y: p.endY, opacity: phase >= 3 ? 0 : [0.9, 0.5, 0.9] }
-              : {}
-          }
-          transition={{
-            duration: phase === 0 ? 0.4 : 0.55,
-            delay: phase === 0 ? p.delay : 0,
-            ease: 'easeOut',
+      {/* Faint grid, kept quiet */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none">
+        <div
+          style={{
+            backgroundImage:
+              "linear-gradient(#f97316 1px,transparent 1px),linear-gradient(90deg,#f97316 1px,transparent 1px)",
+            backgroundSize: "60px 60px",
           }}
+          className="w-full h-full"
         />
-      ))}
-
-      {/* Rotating orbit rings */}
-      <motion.div
-        className="absolute rounded-full border border-orange-500/25 pointer-events-none"
-        style={{ width: 160, height: 160 }}
-        initial={{ opacity: 0, rotate: 0, scale: 0.5 }}
-        animate={phase >= 1 ? { opacity: phase >= 3 ? 0 : 0.6, rotate: 180, scale: 1 } : {}}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
-      />
-      <motion.div
-        className="absolute rounded-full border border-orange-500/15 border-dashed pointer-events-none"
-        style={{ width: 220, height: 220 }}
-        initial={{ opacity: 0, rotate: 0, scale: 0.5 }}
-        animate={phase >= 1 ? { opacity: phase >= 3 ? 0 : 0.4, rotate: -120, scale: 1 } : {}}
-        transition={{ duration: 0.9, ease: 'easeOut' }}
-      />
-
-      {/* Logo text assembles */}
-      <div className="relative z-10 flex items-center gap-0" style={{ fontFamily:"'Courier New',monospace" }}>
-        {LOGO_CHARS.map((ch, i) => (
-          <motion.span key={i}
-            initial={{ opacity: 0, y: 20, scale: 0.6 }}
-            animate={phase >= 1 ? { opacity: phase >= 3 ? 0 : 1, y: 0, scale: 1 } : {}}
-            transition={{ duration: 0.35, delay: i * 0.045, ease: [0.22,1,0.36,1] }}
-            style={{ color: LOGO_COLORS(ch), fontSize: ch === '.' ? '2rem' : '2.5rem', fontWeight: 900, lineHeight: 1 }}
-          >
-            {ch}
-          </motion.span>
-        ))}
       </div>
 
-      {/* Tagline */}
-      <motion.p
-        className="absolute bottom-1/3 text-orange-500/60 text-[11px] tracking-[0.5em] uppercase"
-        style={{ fontFamily:"'Courier New',monospace" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: phase >= 1 && phase < 3 ? 1 : 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-      >
-        // initializing portfolio
-      </motion.p>
-
-      {/* Progress line */}
+      
       <motion.div
-        className="absolute bottom-[28%] h-[1px] bg-gradient-to-r from-transparent via-orange-500 to-transparent"
-        initial={{ width: 0, opacity: 0 }}
-        animate={phase >= 1 ? { width: phase >= 3 ? 0 : '180px', opacity: phase >= 3 ? 0 : 1 } : {}}
-        transition={{ duration: 0.6, delay: 0.3 }}
+        className="absolute w-[420px] h-[420px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none"
+        animate={{ opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
       />
+
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        
+        <motion.div
+          initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="flex items-baseline"
+          style={{ fontFamily: MONO }}
+        >
+          <span className="text-orange-500 font-black text-3xl sm:text-4xl">&lt;</span>
+          <span className="text-white font-black text-3xl sm:text-4xl tracking-tight">MYDATAAPPLIED.COM</span>
+          <span className="text-orange-500 font-black text-3xl sm:text-4xl">.</span>
+          <span className="text-white font-black text-3xl sm:text-4xl tracking-tight">COM</span>
+          <span className="text-orange-500 font-black text-3xl sm:text-4xl">/&gt;</span>
+        </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35, duration: 0.5 }}
+          className="text-orange-500/50 text-[10px] tracking-[0.5em] uppercase"
+          style={{ fontFamily: MONO }}
+        >
+          //Portfolio Loading...
+        </motion.p>
+
+        
+        <motion.div
+          initial={{ opacity: 0, width: 0 }}
+          animate={{ opacity: 1, width: 160 }}
+          transition={{ delay: 0.3, duration: 0.4, ease: "easeOut" }}
+          className="h-[2px] bg-orange-500/12 rounded-full overflow-hidden"
+        >
+          <motion.div
+            className="h-full bg-gradient-to-r from-orange-600 via-orange-400 to-orange-300 rounded-full"
+            style={{ width: `${progress}%` }}
+          />
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [hovered, setHovered] = useState(null);
+
   const [loading, setLoading] = useState(true);
+  usePagePolish();
+
+  
+  const glowX = useMotionValue(0);
+  const glowY = useMotionValue(0);
+  const glowSX = useSpring(glowX, { stiffness: 40, damping: 18 });
+  const glowSY = useSpring(glowY, { stiffness: 40, damping: 18 });
+  const handlePointerMove = (e) => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    glowX.set((e.clientX / w - 0.5) * 70);
+    glowY.set((e.clientY / h - 0.5) * 70);
+  };
 
   const title = "<MYDATAAPPLIED.COM/>";
+
+  const PATHS = [
+    { icon: "📊", text: "View Analytics Portfolio", route: "/data", filled: false },
+    { icon: "💻", text: "View Development Portfolio", route: "/dev", filled: true },
+  ];
 
   return (
     <>
@@ -264,10 +483,15 @@ export default function Landing() {
         {loading && <LandingLoader onDone={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* ── Single full-page wrapper with bg-black ── */}
-      <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden overflow-x-hidden">
+      
+      <div
+        onMouseMove={handlePointerMove}
+        className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden overflow-x-hidden"
+      >
 
-        {/* ── Layer 1: Grid ── */}
+        <GrainOverlay />
+
+        
         <div className="absolute inset-0 opacity-[0.07] pointer-events-none">
           <div style={{
             backgroundImage: "linear-gradient(#f97316 1px, transparent 1px), linear-gradient(90deg, #f97316 1px, transparent 1px)",
@@ -275,7 +499,7 @@ export default function Landing() {
           }} className="w-full h-full" />
         </div>
 
-        {/* ── Layer 2: Corner accent lines ── */}
+        
         {[
           "top-0 left-0 border-t-2 border-l-2",
           "top-0 right-0 border-t-2 border-r-2",
@@ -290,28 +514,40 @@ export default function Landing() {
           />
         ))}
 
-        {/* ── Layer 3: Constellation ── */}
+       
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={!loading ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="absolute inset-x-0 top-5 mx-auto w-fit hidden sm:flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-500/20 bg-black/40 backdrop-blur-sm z-20"
+        >
+          <motion.span
+            animate={{ opacity: [1, 0.3, 1] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
+            className="w-1.5 h-1.5 rounded-full bg-orange-500"
+          />
+          <span
+            className="text-[10px] tracking-[0.25em] uppercase text-orange-400/70"
+            style={{ fontFamily: MONO }}
+          >
+            mydataapplied.com
+          </span>
+        </motion.div>
+
+        
         <Constellation />
 
-        {/* ── Layer 4: Data glyphs ── */}
+        
         <DataGlyphs />
 
-        {/* ── Layer 5: Central ambient orb ── */}
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle, rgba(249,115,22,0.18) 0%, rgba(249,115,22,0.06) 50%, transparent 75%)" }}
-          animate={{ scale: [1, 1.08, 1], opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        />
+        
+        <AuroraMesh followX={glowSX} followY={glowSY} />
 
-        {/* ── Layer 6: Pulse rings ── */}
-        <PulseRings />
-
-        {/* ── Layer 7: Scanline ── */}
+        
         <ScanLine />
 
-        {/* ── Layer 8: Floating particles ── */}
-        {Array.from({ length: 30 }).map((_, i) => {
+        
+        {Array.from({ length: 18 }).map((_, i) => {
           const x = Math.random() * 100;
           const y = Math.random() * 100;
           const sz = Math.random() * 3 + 1;
@@ -328,105 +564,106 @@ export default function Landing() {
           );
         })}
 
-        {/* ── MAIN CONTENT (flex-1 centres vertically) ── */}
+        
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center gap-4 sm:gap-6 px-4 sm:px-6 py-16 w-full max-w-3xl mx-auto">
 
-          {/* Top label */}
+          
           <motion.p
             initial={{ opacity: 0, letterSpacing: "0.1em" }}
-            animate={{ opacity: 1, letterSpacing: "0.45em" }}
-            transition={{ duration: 1.2, delay: 0.3 }}
+            animate={!loading ? { opacity: 1, letterSpacing: "0.45em" } : {}}
+            transition={{ duration: 1, delay: 0 }}
             className="text-orange-400 text-[12px] font-semibold uppercase tracking-[0.4em]"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             // Personal Portfolio Website
           </motion.p>
 
-          {/* Decorative line */}
+          
           <motion.div
             initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.9, delay: 0.5, ease: "easeOut" }}
+            animate={!loading ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
             className="h-px w-32 bg-gradient-to-r from-transparent via-orange-500 to-transparent"
           />
 
-          {/* Title — character by character */}
-          <h1 className="text-[2rem] xs:text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none"
-            style={{ fontFamily: "'Courier New', monospace" }}>
-            {title.split("").map((ch, i) => (
-              <motion.span key={i}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.6 + i * 0.035, ease: "easeOut" }}
-                className={ch === "<" || ch === "/" || ch === ">" || ch === "." ? "text-orange-500" : "text-white"}
-              >
-                {ch}
-              </motion.span>
-            ))}
+          
+          <h1
+            aria-label={title}
+            className="relative text-[2rem] xs:text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none"
+            style={{ fontFamily: MONO }}
+          >
+            <span aria-hidden="true">
+              {title.split("").map((ch, i) => (
+                <motion.span key={i}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={!loading ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.25 + i * 0.035, ease: "easeOut" }}
+                  className={ch === "<" || ch === "/" || ch === ">" || ch === "." ? "text-orange-500" : "text-white"}
+                >
+                  {ch}
+                </motion.span>
+              ))}
+            </span>
+            <motion.span
+              aria-hidden="true"
+              className="absolute inset-0 pointer-events-none select-none"
+              style={{
+                backgroundImage:
+                  "linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%)",
+                backgroundSize: "250% 100%",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+              animate={!loading ? { backgroundPositionX: ["0%", "250%"] } : {}}
+              transition={{
+                duration: 2.2,
+                repeat: Infinity,
+                repeatDelay: 4.5,
+                ease: "easeInOut",
+                delay: 1.1,
+              }}
+            >
+              {title}
+            </motion.span>
           </h1>
 
-          {/* Subtitle */}
+          
           <motion.p
             initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
+            animate={!loading ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.75 }}
             className="text-orange-400/80 tracking-[0.3em] uppercase text-xs font-light"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             — Created by Shiv Prakash Gupta —
           </motion.p>
 
-          {/* Decorative line */}
+          
           <motion.div
             initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.9, delay: 1.5, ease: "easeOut" }}
+            animate={!loading ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.7, delay: 0.85, ease: "easeOut" }}
             className="h-px w-32 bg-gradient-to-r from-transparent via-orange-500 to-transparent"
           />
 
-          {/* Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.7 }}
-            className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto justify-center items-center"
-          >
-            {[
-              { label: "📊 View Analytics Portfolio", route: "/data", filled: false },
-              { label: "💻 View Development Portfolio",  route: "/dev",  filled: true  },
-            ].map(({ label, route, filled }) => (
-              <motion.button key={route}
-                onHoverStart={() => setHovered(route)}
-                onHoverEnd={() => setHovered(null)}
-                whileHover={{ scale: 1.06, y: -3 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={() => navigate(route)}
-                className={`relative w-full sm:w-auto px-7 sm:px-10 py-3.5 sm:py-4 font-black tracking-widest uppercase text-sm overflow-hidden
-                  transition-all duration-300
-                  ${filled
-                    ? "bg-orange-500 text-black hover:bg-orange-400"
-                    : "border-2 border-orange-500 text-orange-500 hover:text-black"}`}
-                style={{ fontFamily: "'Courier New', monospace",
-                  boxShadow: hovered === route ? "0 0 40px rgba(249,115,22,0.55), 0 0 80px rgba(249,115,22,0.2)" : "none" }}
-              >
-                {!filled && (
-                  <motion.div
-                    className="absolute inset-0 bg-orange-500 origin-left"
-                    initial={{ scaleX: 0 }}
-                    animate={{ scaleX: hovered === route ? 1 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                )}
-                <span className="relative z-10">{label}</span>
-              </motion.button>
+         
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-4 w-full max-w-xl">
+            {PATHS.map((path, i) => (
+              <PathCard
+                key={path.route}
+                {...path}
+                navigate={navigate}
+                delay={1.0 + i * 0.12}
+              />
             ))}
-          </motion.div>
+          </div>
 
-          {/* Pulsing hint */}
+          
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2.2 }}
+            animate={!loading ? { opacity: 1 } : {}}
+            transition={{ delay: 1.35 }}
             className="flex items-center gap-3 mt-2"
           >
             <motion.div
@@ -438,7 +675,7 @@ export default function Landing() {
               animate={{ opacity: [0.75, 1, 0.75] }}
               transition={{ duration: 2.5, repeat: Infinity }}
               className="text-orange-300 text-[12px] font-semibold tracking-[0.35em] uppercase"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               // select your portfolio
             </motion.p>
@@ -450,9 +687,9 @@ export default function Landing() {
           </motion.div>
         </div>
 
-        {/* ── Footer — inside bg-black div so background applies ── */}
+        
         <footer className="relative z-10 py-4 text-center border-t border-orange-500/10 bg-black px-4">
-          <p className="text-orange-400/80 text-[10px] sm:text-[11px] tracking-widest break-words" style={{ fontFamily: "'Courier New', monospace" }}>
+          <p className="text-orange-400/80 text-[10px] sm:text-[11px] tracking-widest break-words" style={{ fontFamily: MONO }}>
             ALL COPYRIGHTS RESERVED © {new Date().getFullYear()} Shiv Prakash Gupta - MYDATAAPPLIED.COM - Landing Page
           </p>
         </footer>

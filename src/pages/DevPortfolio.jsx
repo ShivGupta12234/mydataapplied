@@ -1,8 +1,191 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-empty */
+/* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  useInView,
+  AnimatePresence,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 
-/* ─── Constants ─── */
+
+const MONO = "'JetBrains Mono', 'Fira Code', 'Courier New', monospace";
+const DISPLAY = "'Space Grotesk', 'JetBrains Mono', sans-serif";
+
+
+function usePagePolish() {
+  useEffect(() => {
+    if (!document.getElementById("mda-font-links")) {
+      const link = document.createElement("link");
+      link.id = "mda-font-links";
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap";
+      document.head.appendChild(link);
+    }
+    if (!document.getElementById("mda-global-polish")) {
+      const style = document.createElement("style");
+      style.id = "mda-global-polish";
+      style.innerHTML = `
+        ::selection { background: rgba(249,115,22,0.35); color: #ffffff; }
+        ::-webkit-scrollbar { width: 9px; height: 9px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#f97316,#9a3412); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #fb923c; }
+        html { scroll-behavior: smooth; }
+        *:focus-visible { outline: 2px solid #f97316; outline-offset: 3px; border-radius: 4px; }
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }, []);
+}
+
+
+function GrainOverlay() {
+  return (
+    <svg
+      className="fixed inset-0 w-full h-full pointer-events-none z-[1] opacity-[0.025] mix-blend-overlay"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <filter id="mda-grain-dev">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.85"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#mda-grain-dev)" />
+    </svg>
+  );
+}
+
+
+function ScrollProgressBar() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      setProgress(max > 0 ? (el.scrollTop / max) * 100 : 0);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <div className="fixed top-0 left-0 right-0 h-[2px] z-[70] bg-orange-500/10 pointer-events-none">
+      <motion.div
+        className="h-full bg-gradient-to-r from-orange-700 via-orange-400 to-orange-300"
+        style={{ width: `${progress}%` }}
+        transition={{ duration: 0.1 }}
+      />
+    </div>
+  );
+}
+
+
+function BackToTop() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShow(window.scrollY > 700);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.button
+          initial={{ opacity: 0, y: 20, scale: 0.7 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.7 }}
+          whileHover={{
+            scale: 1.1,
+            boxShadow: "0 0 26px rgba(249,115,22,0.55)",
+          }}
+          whileTap={{ scale: 0.92 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Back to top"
+          className="fixed bottom-5 right-5 sm:bottom-8 sm:right-8 z-[55] w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-orange-500 text-black flex items-center justify-center shadow-lg shadow-orange-500/30"
+        >
+          <motion.span
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 1.4, repeat: Infinity }}
+            className="text-lg font-bold"
+          >
+            ↑
+          </motion.span>
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
+
+function useTiltRef(max = 7) {
+  const ref = useRef(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRX = useSpring(rotateX, { stiffness: 300, damping: 28, mass: 0.6 });
+  const springRY = useSpring(rotateY, { stiffness: 300, damping: 28, mass: 0.6 });
+  const onMouseMove = (e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
+    const py = (e.clientY - rect.top) / rect.height - 0.5;
+    rotateY.set(px * max);
+    rotateX.set(-py * max);
+  };
+  const onMouseLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+  return { ref, rotateX: springRX, rotateY: springRY, onMouseMove, onMouseLeave };
+}
+
+
+function MagneticWrap({ children, className = "", strength = 0.3 }) {
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springX = useSpring(x, { stiffness: 150, damping: 14, mass: 0.2 });
+  const springY = useSpring(y, { stiffness: 150, damping: 14, mass: 0.2 });
+  const onMouseMove = (e) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    x.set((e.clientX - rect.left - rect.width / 2) * strength);
+    y.set((e.clientY - rect.top - rect.height / 2) * strength);
+  };
+  const onMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ x: springX, y: springY }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 const NAV_LINKS = [
   "about",
   "skills",
@@ -22,7 +205,8 @@ const NAV_LABEL = {
   contact: "Contact",
 };
 
-/* ── Change 3: Dev Skills ── */
+
+
 const SKILLS = [
   { name: "C++", svg: "https://cdn.simpleicons.org/cplusplus/f97316" },
   { name: "JavaScript", svg: "https://cdn.simpleicons.org/javascript/f97316" },
@@ -55,7 +239,8 @@ const SKILLS = [
   { name: "CI/CD", svg: null, fallbackIcon: "⚙️" },
 ];
 
-/* ── Change 4: Dev Certificates ── */
+
+
 const CERTIFICATES = [
   {
     id: 1,
@@ -76,16 +261,27 @@ const CERTIFICATES = [
   },
   {
     id: 2,
+    title: "Google AI Professional Ccertificate",
+    issuer: "Google/Coursera",
+    link: "https://www.coursera.org/account/accomplishments/specialization/MC84LFUO90FG",
+    gradient: "from-orange-500/25 to-orange-900/10",
+    borderColor: "border-orange-500/30",
+    icon: "🌐",
+    skills: ["AI API", "Gemini AI", "Generative AI", "AI"],
+  },
+  {
+    id: 3,
     title: "Learn Node.js",
     issuer: "Scrimba",
     link: "http://scrimba.com/learn-nodejs-c00ho9qqh6",
     gradient: "from-green-500/25 to-green-900/10",
     borderColor: "border-green-500/30",
-    icon: "🟢",
+    icon: "🛠️",
     skills: ["Node.js", "npm", "Modules", "File System"],
   },
+  
   {
-    id: 3,
+    id: 4,
     title: "React Essential Training",
     issuer: "LinkedIn Learning",
     link: "http://linkedin.com/learning/certificates/959631b90b7870db661fe069b68b011d0519b72fec5a4ed75f6b62f71f91e74e",
@@ -94,8 +290,9 @@ const CERTIFICATES = [
     icon: "⚛️",
     skills: ["React", "Hooks", "Components", "State"],
   },
+  
   {
-    id: 4,
+    id: 5,
     title: "React.js: Building an Interface",
     issuer: "LinkedIn Learning",
     link: "https://www.linkedin.com/learning/certificates/08b82b700e8c2eb6188852e610218a807c330b658914dddd6bc1b8597d4be02b",
@@ -104,8 +301,30 @@ const CERTIFICATES = [
     icon: "🖥️",
     skills: ["React", "UI Design", "Props", "Events"],
   },
+  
+  
   {
-    id: 5,
+    id: 6,
+    title: "SQL Certification",
+    issuer: "Hackerrank",
+    link: "https://www.hackerrank.com/certificates/6be41a4f9da9",
+    gradient: "from-pink-500/25 to-pink-900/10",
+    borderColor: "border-pink-500/30",
+    icon: "🛢️",
+    skills: ["SQL", "Database Design", "Query Optimization", "JOINs", "Subqueries", "Indexes", "Views", "Stored Procedures", "CTEs", "Transactions", "Normalization"],
+  },
+  {
+    id: 7,
+    title: "Certificate of Completion: Al Fluency Framework & Foundations",
+    issuer: "Anthropic",
+    link: "https://verify.skilljar.com/c/pj3ogpcpp34f",
+    gradient: "from-teal-500/25 to-teal-900/10",
+    borderColor: "border-teal-500/30",
+    icon: "🤖",
+    skills: ["AI", "Claude Code", "Prompt Engineering"],
+  },
+  {
+    id: 8,
     title: "Certificate of Excellence",
     issuer: "Coding Ninjas",
     link: "https://certificate.codingninjas.com/verify/89a9a840c5e5f368",
@@ -116,8 +335,9 @@ const CERTIFICATES = [
     icon: "🏆",
     skills: ["DSA", "Problem Solving", "C++"],
   },
+  
   {
-    id: 6,
+    id: 9,
     title: "Certificate of Completion",
     issuer: "Coding Ninjas",
     link: "https://certificate.codingninjas.com/verify/4a4ca480555cf642",
@@ -241,7 +461,7 @@ const PROJECTS = [
   },
 ];
 
-/* ── Coding Profiles (same as Data) ── */
+
 const LeetCodeSVG = () => (
   <svg viewBox="0 0 24 24" className="w-9 h-9" fill="#f97316">
     <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z" />
@@ -267,7 +487,7 @@ const DataLemurSVG = () => (
       fontSize="14"
       fontWeight="900"
       fill="#f97316"
-      fontFamily="'Courier New', monospace"
+      fontFamily={MONO}
     >
       DL
     </text>
@@ -353,7 +573,8 @@ const CODING_PROFILES = [
   },
 ];
 
-/* ─── Reusable Components ─── */
+
+
 function Particles() {
   const [particles] = useState(() =>
     Array.from({ length: 36 }, (_, i) => {
@@ -433,7 +654,7 @@ function SectionLabel({ comment, title }) {
         animate={inView ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="text-orange-500 text-sm tracking-[0.3em] uppercase block"
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         {comment}
       </motion.span>
@@ -442,8 +663,8 @@ function SectionLabel({ comment, title }) {
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-4xl sm:text-5xl font-bold"
-          style={{ fontFamily: "'Courier New', monospace" }}
+          className="text-4xl sm:text-5xl font-bold tracking-tight"
+          style={{ fontFamily: DISPLAY }}
         >
           {title}
           <span className="text-orange-500">.</span>
@@ -487,7 +708,7 @@ function SkillItem({ skill }) {
       )}
       <span
         className="text-[11px] text-orange-200/80 text-center whitespace-nowrap"
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         {skill.name}
       </span>
@@ -515,11 +736,13 @@ function SkillsStrip() {
 }
 
 function CertCard({ cert, index }) {
-  const ref = useRef(null);
+  const { ref, rotateX, rotateY, onMouseMove, onMouseLeave } = useTiltRef(6);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div
       ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
       initial={{ opacity: 0, y: 60 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: index * 0.1 }}
@@ -528,6 +751,7 @@ function CertCard({ cert, index }) {
         scale: 1.03,
         boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
       }}
+      style={{ rotateX, rotateY, transformPerspective: 900 }}
       className={`relative rounded-2xl border ${cert.borderColor} bg-gradient-to-br ${cert.gradient}
         backdrop-blur-sm p-6 flex flex-col gap-4 overflow-hidden group cursor-pointer`}
       onClick={() => window.open(cert.link, "_blank")}
@@ -546,13 +770,13 @@ function CertCard({ cert, index }) {
         <div className="flex-1 min-w-0">
           <h3
             className="text-white font-bold text-sm leading-snug mb-1"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {cert.title}
           </h3>
           <p
             className="text-orange-400 text-[11px] tracking-widest uppercase"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {cert.issuer}
           </p>
@@ -563,7 +787,7 @@ function CertCard({ cert, index }) {
           <span
             key={s}
             className="px-2 py-0.5 text-[10px] border border-orange-500/30 text-orange-300/80 rounded-full"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {s}
           </span>
@@ -576,7 +800,7 @@ function CertCard({ cert, index }) {
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
           className="text-[11px] text-orange-400 border border-orange-500/40 px-3 py-1.5 rounded-full hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all"
-          style={{ fontFamily: "'Courier New', monospace" }}
+          style={{ fontFamily: MONO }}
         >
           🔗 Verify
         </a>
@@ -587,7 +811,7 @@ function CertCard({ cert, index }) {
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
             className="text-[11px] text-orange-400 border border-orange-500/40 px-3 py-1.5 rounded-full hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             📄 PDF
           </a>
@@ -597,13 +821,15 @@ function CertCard({ cert, index }) {
   );
 }
 
-/* ── Change 5: Project Card ── */
+
 function ProjectCard({ project, index }) {
-  const ref = useRef(null);
+  const { ref, rotateX, rotateY, onMouseMove, onMouseLeave } = useTiltRef(6);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   return (
     <motion.div
       ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
       initial={{ opacity: 0, y: 70, scale: 0.95 }}
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{
@@ -617,11 +843,12 @@ function ProjectCard({ project, index }) {
         scale: 1.025,
         boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
       }}
+      style={{ rotateX, rotateY, transformPerspective: 1000 }}
       className={`relative rounded-2xl border ${project.borderColor} bg-gradient-to-br ${project.gradient}
         backdrop-blur-sm p-4 sm:p-6 flex flex-col gap-4 overflow-hidden group cursor-pointer`}
       onClick={() => window.open(project.url, "_blank")}
     >
-      {/* Glow blob */}
+      
       <motion.div
         className="absolute -top-8 -right-8 w-40 h-40 rounded-full blur-3xl pointer-events-none"
         style={{ background: project.glowColor }}
@@ -633,20 +860,20 @@ function ProjectCard({ project, index }) {
         style={{ boxShadow: `inset 0 0 60px ${project.glowColor}` }}
       />
 
-      {/* Header */}
+      
       <div className="flex items-start justify-between gap-3 relative z-10">
         <div className="flex items-center gap-3">
           <span className="text-4xl">{project.icon}</span>
           <div>
             <h3
               className="text-white font-bold text-base leading-tight"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {project.title}
             </h3>
             <p
               className={`text-[11px] mt-0.5 ${project.accentColor}`}
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {project.subtitle}
             </p>
@@ -655,7 +882,7 @@ function ProjectCard({ project, index }) {
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
           <span
             className={`text-[10px] px-2.5 py-1 rounded-full border font-bold tracking-widest uppercase ${project.statusColor}`}
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {project.status}
           </span>
@@ -669,28 +896,28 @@ function ProjectCard({ project, index }) {
         </div>
       </div>
 
-      {/* Description */}
+      
       <p
         className="text-gray-400 text-[12px] leading-relaxed relative z-10"
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         {project.description}
       </p>
 
-      {/* Tech stack */}
+      
       <div className="flex flex-wrap gap-2 relative z-10">
         {project.tech.map((t) => (
           <span
             key={t}
             className={`px-2.5 py-1 text-[10px] border ${project.borderColor} ${project.accentColor} rounded-full bg-black/20`}
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {t}
           </span>
         ))}
       </div>
 
-      {/* CTA */}
+      
       <div className="relative z-10 mt-auto flex flex-wrap gap-3">
         <motion.a
           href={project.url}
@@ -705,7 +932,7 @@ function ProjectCard({ project, index }) {
           className={`inline-flex items-center justify-center gap-2 px-5 py-2.5
             border ${project.borderColor} ${project.accentColor} text-[11px] font-bold tracking-widest uppercase
             rounded-xl hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300`}
-          style={{ fontFamily: "'Courier New', monospace" }}
+          style={{ fontFamily: MONO }}
         >
           View on GitHub ↗
         </motion.a>
@@ -723,7 +950,7 @@ function ProjectCard({ project, index }) {
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5
               border border-orange-500 text-orange-400 text-[11px] font-bold tracking-widest uppercase
               rounded-xl bg-orange-500/10 hover:bg-orange-500 hover:text-black transition-all duration-300"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             🌐 Live Site ↗
           </motion.a>
@@ -734,12 +961,14 @@ function ProjectCard({ project, index }) {
 }
 
 function CodingProfileCard({ profile, index }) {
-  const ref = useRef(null);
+  const { ref, rotateX, rotateY, onMouseMove, onMouseLeave } = useTiltRef(6);
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const { Logo } = profile;
   return (
     <motion.div
       ref={ref}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
       initial={{ opacity: 0, y: 70, scale: 0.95 }}
       animate={inView ? { opacity: 1, y: 0, scale: 1 } : {}}
       transition={{
@@ -753,6 +982,7 @@ function CodingProfileCard({ profile, index }) {
         scale: 1.025,
         boxShadow: "0 24px 60px rgba(0,0,0,0.5)",
       }}
+      style={{ rotateX, rotateY, transformPerspective: 1000 }}
       className={`relative rounded-2xl border ${profile.borderColor} bg-gradient-to-br ${profile.gradient}
         backdrop-blur-sm p-4 sm:p-6 flex flex-col gap-4 overflow-hidden group cursor-pointer`}
       onClick={() => window.open(profile.url, "_blank")}
@@ -778,13 +1008,13 @@ function CodingProfileCard({ profile, index }) {
         <div className="flex-1 min-w-0">
           <h3
             className="text-white font-bold text-lg"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {profile.name}
           </h3>
           <p
             className={`text-xs tracking-widest mt-0.5 ${profile.accentColor}`}
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {profile.handle}
           </p>
@@ -799,7 +1029,7 @@ function CodingProfileCard({ profile, index }) {
       </div>
       <p
         className="text-gray-400 text-[12px] leading-relaxed relative z-10"
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         {profile.description}
       </p>
@@ -811,13 +1041,13 @@ function CodingProfileCard({ profile, index }) {
           >
             <p
               className={`text-[12px] font-bold ${profile.accentColor}`}
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {stat.value}
             </p>
             <p
               className="text-gray-600 text-[9px] mt-0.5 uppercase tracking-wider"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {stat.label}
             </p>
@@ -834,7 +1064,7 @@ function CodingProfileCard({ profile, index }) {
         className={`relative z-10 mt-auto inline-flex items-center justify-center gap-2 px-5 py-2.5
           border ${profile.borderColor} ${profile.accentColor} text-[11px] font-bold tracking-widest uppercase
           rounded-xl hover:bg-orange-500 hover:text-black hover:border-orange-500 transition-all duration-300`}
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         View Profile ↗
       </motion.a>
@@ -894,19 +1124,19 @@ function EducationCard({ edu }) {
             <div>
               <p
                 className={`text-[10px] tracking-[0.3em] uppercase ${edu.accentColor} mb-1`}
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 {edu.level}
               </p>
               <h3
                 className="text-white font-bold text-lg leading-tight"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 {edu.degree}
               </h3>
               <p
                 className="text-gray-400 text-[12px] mt-0.5"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 {edu.stream}
               </p>
@@ -915,13 +1145,13 @@ function EducationCard({ edu }) {
           <div className="flex flex-col items-end gap-2 flex-shrink-0">
             <span
               className={`text-[10px] px-3 py-1 rounded-full border font-bold tracking-widest uppercase ${edu.statusColor}`}
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {edu.status}
             </span>
             <span
               className="text-[11px] text-gray-500 tracking-widest"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {edu.period}
             </span>
@@ -933,7 +1163,7 @@ function EducationCard({ edu }) {
           <span className="text-base">🏫</span>
           <p
             className="text-gray-300 text-[12px]"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             {edu.institution}
           </p>
@@ -945,7 +1175,7 @@ function EducationCard({ edu }) {
             <span className="text-sm">📊</span>
             <span
               className={`text-sm font-bold ${edu.accentColor}`}
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               Grade: {edu.grade}
             </span>
@@ -955,7 +1185,7 @@ function EducationCard({ edu }) {
               <span
                 key={s}
                 className={`px-2.5 py-1 text-[10px] border ${edu.borderColor} ${edu.accentColor} rounded-full bg-black/20`}
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 {s}
               </span>
@@ -1008,7 +1238,7 @@ function ContactForm() {
       />
       <p
         className="text-orange-500 text-[10px] tracking-[0.3em] uppercase relative z-10"
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         // send a message
       </p>
@@ -1032,7 +1262,7 @@ function ContactForm() {
           <div key={field.name} className="flex flex-col gap-1.5">
             <label
               className="text-orange-500/70 text-[10px] tracking-widest uppercase"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {field.label}{" "}
               {field.required && <span className="text-orange-500">*</span>}
@@ -1046,7 +1276,7 @@ function ContactForm() {
               placeholder={field.placeholder}
               required={field.required}
               className={inputClass}
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             />
           </div>
         ))}
@@ -1054,7 +1284,7 @@ function ContactForm() {
       <div className="flex flex-col gap-1.5 relative z-10">
         <label
           className="text-orange-500/70 text-[10px] tracking-widest uppercase"
-          style={{ fontFamily: "'Courier New', monospace" }}
+          style={{ fontFamily: MONO }}
         >
           Subject
         </label>
@@ -1066,13 +1296,13 @@ function ContactForm() {
           onChange={handleChange}
           placeholder="Developer Role / Freelance / Collaboration / Other"
           className={inputClass}
-          style={{ fontFamily: "'Courier New', monospace" }}
+          style={{ fontFamily: MONO }}
         />
       </div>
       <div className="flex flex-col gap-1.5 relative z-10">
         <label
           className="text-orange-500/70 text-[10px] tracking-widest uppercase"
-          style={{ fontFamily: "'Courier New', monospace" }}
+          style={{ fontFamily: MONO }}
         >
           Message <span className="text-orange-500">*</span>
         </label>
@@ -1085,7 +1315,7 @@ function ContactForm() {
           required
           rows={5}
           className={`${inputClass} resize-none`}
-          style={{ fontFamily: "'Courier New', monospace" }}
+          style={{ fontFamily: MONO }}
         />
       </div>
       <motion.button
@@ -1097,9 +1327,12 @@ function ContactForm() {
             : {}
         }
         whileTap={status === "idle" ? { scale: 0.97 } : {}}
-        className={`relative z-10 w-full py-4 font-bold tracking-widest uppercase text-sm rounded-xl transition-all duration-300 flex items-center justify-center gap-3 ${status === "sent" ? "bg-green-500 text-black" : status === "sending" ? "bg-orange-500/50 text-black/70 cursor-wait" : "bg-orange-500 text-black hover:bg-orange-400"}`}
-        style={{ fontFamily: "'Courier New', monospace" }}
+        className={`group relative z-10 w-full py-4 font-bold tracking-widest uppercase text-sm rounded-xl overflow-hidden transition-all duration-300 flex items-center justify-center gap-3 ${status === "sent" ? "bg-green-500 text-black" : status === "sending" ? "bg-orange-500/50 text-black/70 cursor-wait" : "bg-orange-500 text-black hover:bg-orange-400"}`}
+        style={{ fontFamily: MONO }}
       >
+        {status === "idle" && (
+          <span className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/35 to-transparent skew-x-12 pointer-events-none" />
+        )}
         {status === "sending" && (
           <motion.div
             animate={{ rotate: 360 }}
@@ -1107,13 +1340,15 @@ function ContactForm() {
             className="w-4 h-4 border-2 border-black/40 border-t-black rounded-full"
           />
         )}
-        {status === "idle" && "Send Message ↗"}
-        {status === "sending" && "Opening Mail..."}
-        {status === "sent" && "✓ Done! Check your mail client"}
+        <span className="relative z-10">
+          {status === "idle" && "Send Message ↗"}
+          {status === "sending" && "Opening Mail..."}
+          {status === "sent" && "✓ Done! Check your mail client"}
+        </span>
       </motion.button>
       <p
         className="text-gray-700 text-[10px] text-center tracking-wider relative z-10"
-        style={{ fontFamily: "'Courier New', monospace" }}
+        style={{ fontFamily: MONO }}
       >
         // this will open your default mail client
       </p>
@@ -1129,7 +1364,7 @@ function playDataSound() {
     master.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.3);
     master.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.5);
     master.connect(ctx.destination);
-    // Low drone
+    
     const osc1 = ctx.createOscillator();
     osc1.type = "sine";
     osc1.frequency.setValueAtTime(80, ctx.currentTime);
@@ -1137,7 +1372,7 @@ function playDataSound() {
     osc1.connect(master);
     osc1.start(ctx.currentTime);
     osc1.stop(ctx.currentTime + 3.5);
-    // Mid rising
+    
     const osc2 = ctx.createOscillator();
     const g2 = ctx.createGain();
     g2.gain.setValueAtTime(0, ctx.currentTime + 0.4);
@@ -1150,7 +1385,7 @@ function playDataSound() {
     g2.connect(ctx.destination);
     osc2.start(ctx.currentTime + 0.4);
     osc2.stop(ctx.currentTime + 3.5);
-    // High sparkle
+    
     const osc3 = ctx.createOscillator();
     const g3 = ctx.createGain();
     g3.gain.setValueAtTime(0, ctx.currentTime + 1.0);
@@ -1264,7 +1499,7 @@ function DevLoader({ onDone }) {
             >
               <span
                 className="text-orange-500 font-black text-3xl select-none"
-                style={{ fontFamily: "'Courier New',monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 {"{ }"}
               </span>
@@ -1272,7 +1507,7 @@ function DevLoader({ onDone }) {
           </div>
           <p
             className="text-orange-500 text-[11px] tracking-[0.45em] uppercase"
-            style={{ fontFamily: "'Courier New',monospace" }}
+            style={{ fontFamily: MONO }}
           >
             DEVELOPMENT PORTFOLIO LOADING...
           </p>
@@ -1290,7 +1525,7 @@ function DevLoader({ onDone }) {
             <div className="w-2.5 h-2.5 rounded-full bg-orange-500/20" />
             <span
               className="ml-2 text-orange-500/40 text-[10px] tracking-widest"
-              style={{ fontFamily: "'Courier New',monospace" }}
+              style={{ fontFamily: MONO }}
             >
               ~/portfolio/dev — 001
             </span>
@@ -1303,7 +1538,7 @@ function DevLoader({ onDone }) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
                 className={`text-[11px] ${line.color} flex items-center gap-2`}
-                style={{ fontFamily: "'Courier New',monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 <span className="text-orange-500/35 text-[9px]">&#9654;</span>
                 <span>{line.text}</span>
@@ -1318,18 +1553,18 @@ function DevLoader({ onDone }) {
             ))}
           </div>
         </motion.div>
-        {/* Progress */}
+        
         <div className="w-full space-y-2">
           <div className="flex justify-between items-center">
             <span
               className="text-orange-500/40 text-[10px] tracking-widest uppercase"
-              style={{ fontFamily: "'Courier New',monospace" }}
+              style={{ fontFamily: MONO }}
             >
               Build Progress
             </span>
             <span
               className="text-orange-400 text-[11px] font-bold tabular-nums"
-              style={{ fontFamily: "'Courier New',monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {Math.round(progress)}%
             </span>
@@ -1354,7 +1589,7 @@ function DevLoader({ onDone }) {
             />
             <span
               className="text-orange-500/30 text-[10px] tracking-widest"
-              style={{ fontFamily: "'Courier New',monospace" }}
+              style={{ fontFamily: MONO }}
             >
               {progress < 100 ? "compiling..." : "ready."}
             </span>
@@ -1365,13 +1600,25 @@ function DevLoader({ onDone }) {
   );
 }
 
-/* ─── Main Page ─── */
+
 export default function DevPortfolio() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("about");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  usePagePolish();
+
+
+  const glowX = useMotionValue(0);
+  const glowY = useMotionValue(0);
+  const glowSX = useSpring(glowX, { stiffness: 40, damping: 18 });
+  const glowSY = useSpring(glowY, { stiffness: 40, damping: 18 });
+  const handleHeroMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    glowX.set(((e.clientX - rect.left) / rect.width - 0.5) * 90);
+    glowY.set(((e.clientY - rect.top) / rect.height - 0.5) * 90);
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -1417,7 +1664,10 @@ export default function DevPortfolio() {
       <AnimatePresence mode="wait">
         {loading && <DevLoader onDone={() => setLoading(false)} />}
       </AnimatePresence>
+      <ScrollProgressBar />
+      <BackToTop />
       <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
+        <GrainOverlay />
         <Particles />
 
         {/* Grid bg */}
@@ -1524,7 +1774,7 @@ export default function DevPortfolio() {
                   initial={{ opacity: 0, x: -8, scale: 0.85 }}
                   whileHover={{ opacity: 1, x: 0, scale: 1 }}
                   className="absolute left-11 px-2.5 py-1 bg-black/90 border border-orange-500/30 text-orange-400 text-[10px] font-bold tracking-widest uppercase rounded-lg whitespace-nowrap pointer-events-none shadow-lg shadow-orange-500/10"
-                  style={{ fontFamily: "'Courier New', monospace" }}
+                  style={{ fontFamily: MONO }}
                 >
                   {social.label}
                 </motion.span>
@@ -1591,7 +1841,7 @@ export default function DevPortfolio() {
                 />
                 <span
                   className="absolute right-6 top-1/2 -translate-y-1/2 px-2.5 py-1 bg-black/90 border border-orange-500/30 text-orange-400 text-[10px] font-bold tracking-widest uppercase rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg shadow-orange-500/10"
-                  style={{ fontFamily: "'Courier New', monospace" }}
+                  style={{ fontFamily: MONO }}
                 >
                   {NAV_LABEL[section]}
                 </span>
@@ -1618,7 +1868,7 @@ export default function DevPortfolio() {
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/")}
             className="flex items-center gap-2 text-orange-500 font-bold text-sm z-10"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             <span className="text-orange-500/50 text-lg">←</span>
             <span>&lt;MYDATAAPPLIED.COM/&gt;</span>
@@ -1631,7 +1881,7 @@ export default function DevPortfolio() {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => scrollTo(section)}
                 className={`relative px-4 py-2 text-xs tracking-widest transition-colors duration-200 uppercase ${activeSection === section ? "text-orange-500" : "text-white/40 hover:text-white/80"}`}
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 {activeSection === section && (
                   <motion.div
@@ -1647,7 +1897,7 @@ export default function DevPortfolio() {
           <div className="flex items-center gap-3 z-10">
             <div
               className="hidden lg:flex text-xs text-orange-500 border border-orange-500/30 px-3 py-1.5 rounded-full tracking-widest"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               💻 Development Portfolio
             </div>
@@ -1702,7 +1952,7 @@ export default function DevPortfolio() {
           className="fixed top-0 right-0 bottom-0 w-[280px] sm:w-[320px] z-50 lg:hidden bg-black/98 border-l border-orange-500/20 backdrop-blur-xl flex flex-col overflow-y-auto"
         >
           <div className="flex items-center justify-between px-6 py-5 border-b border-orange-500/15">
-            <div style={{ fontFamily: "'Courier New', monospace" }}>
+            <div style={{ fontFamily: MONO }}>
               <p className="text-orange-500 font-bold text-sm">
                 &lt;MYDATAAPPLIED.COM/&gt;
               </p>
@@ -1736,7 +1986,7 @@ export default function DevPortfolio() {
               />
               <span
                 className="text-orange-500/60 text-[10px] tracking-widest uppercase"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 Currently: {NAV_LABEL[activeSection]}
               </span>
@@ -1774,13 +2024,13 @@ export default function DevPortfolio() {
                 />
                 <span
                   className={`text-[10px] font-bold w-5 text-right flex-shrink-0 ${activeSection === section ? "text-orange-500" : "text-white/20"}`}
-                  style={{ fontFamily: "'Courier New', monospace" }}
+                  style={{ fontFamily: MONO }}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span
                   className="text-sm font-bold tracking-widest uppercase"
-                  style={{ fontFamily: "'Courier New', monospace" }}
+                  style={{ fontFamily: MONO }}
                 >
                   {NAV_LABEL[section]}
                 </span>
@@ -1800,7 +2050,7 @@ export default function DevPortfolio() {
             <div className="flex items-center justify-between mb-4">
               <span
                 className="text-xs text-orange-500 border border-orange-500/30 px-3 py-1.5 rounded-full tracking-widest"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 💻 Development Portfolio
               </span>
@@ -1816,13 +2066,13 @@ export default function DevPortfolio() {
                 setMenuOpen(false);
               }}
               className="w-full py-3 border border-orange-500/40 text-orange-500 text-xs font-bold tracking-widest uppercase rounded-xl hover:bg-orange-500/10 hover:border-orange-500/70 transition-all duration-300 flex items-center justify-center gap-2"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               ← Back to Home
             </motion.button>
             <p
               className="text-gray-700 text-[9px] text-center tracking-wider mt-4"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               © {new Date().getFullYear()} Shiv Prakash Gupta
             </p>
@@ -1831,9 +2081,20 @@ export default function DevPortfolio() {
 
         <section
           id="about"
+          onMouseMove={handleHeroMove}
           className="relative min-h-screen flex flex-col justify-center px-4 sm:px-6 md:px-12 lg:px-20 pt-20 sm:pt-24 pb-20 sm:pb-28 z-10"
         >
-          <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[min(700px,90vw)] rounded-full bg-orange-500/16 blur-[140px] pointer-events-none" />
+          <motion.div
+            style={{
+              width: "min(700px, 90vw)",
+              height: "min(700px, 90vw)",
+              top: "calc(50% - min(350px, 45vw))",
+              left: "calc(33.333% - min(350px, 45vw))",
+              x: glowSX,
+              y: glowSY,
+            }}
+            className="absolute rounded-full bg-orange-500/16 blur-[140px] pointer-events-none"
+          />
           <div className="max-w-6xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 items-center">
             <div className="flex flex-col items-start text-left">
               <motion.span
@@ -1841,7 +2102,7 @@ export default function DevPortfolio() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className="text-orange-500 text-xs sm:text-sm tracking-[0.3em] uppercase block mb-4 sm:mb-5"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 // about me
               </motion.span>
@@ -1849,12 +2110,12 @@ export default function DevPortfolio() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.35, duration: 0.8 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-5 sm:mb-6"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-5 sm:mb-6"
+                style={{ fontFamily: DISPLAY }}
               >
                 Hi, I'm <span className="text-orange-500">Shiv</span>
                 <br />
-                <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-normal mt-2 block">
+                <span className="text-orange-400/70 text-xl sm:text-2xl md:text-3xl font-medium mt-2 block">
                   Aspiring Full-Stack Developer
                 </span>
               </motion.h1>
@@ -1863,7 +2124,7 @@ export default function DevPortfolio() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.55, duration: 0.7 }}
                 className="text-gray-300 text-sm sm:text-base leading-relaxed mb-3 sm:mb-4 max-w-xl"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 I'm a{" "}
                 <span className="text-orange-400 font-semibold">
@@ -1882,7 +2143,7 @@ export default function DevPortfolio() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.65, duration: 0.7 }}
                 className="text-gray-500 text-xs sm:text-sm leading-relaxed mb-7 sm:mb-10 max-w-xl"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 My projects span data cleaning, analytical workflows, REST API
                 design, and responsive UI - all aimed at translating complex
@@ -1909,13 +2170,13 @@ export default function DevPortfolio() {
                   >
                     <p
                       className="text-orange-400 font-bold text-sm"
-                      style={{ fontFamily: "'Courier New', monospace" }}
+                      style={{ fontFamily: MONO }}
                     >
                       {s.value}
                     </p>
                     <p
                       className="text-gray-600 text-[9px] tracking-widest uppercase mt-0.5"
-                      style={{ fontFamily: "'Courier New', monospace" }}
+                      style={{ fontFamily: MONO }}
                     >
                       {s.label}
                     </p>
@@ -1929,25 +2190,28 @@ export default function DevPortfolio() {
                 transition={{ delay: 0.8 }}
                 className="flex flex-col xs:flex-row gap-3 w-full xs:w-auto"
               >
-                <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 0 30px rgba(249,115,22,0.45)",
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => scrollTo("projects")}
-                  className="px-6 sm:px-8 py-3 bg-orange-500 text-black font-bold tracking-widest uppercase text-xs hover:bg-orange-400 transition-all text-center"
-                  style={{ fontFamily: "'Courier New', monospace" }}
-                >
-                  View Projects →
-                </motion.button>
+                <MagneticWrap strength={0.25} className="w-full xs:w-auto">
+                  <motion.button
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 0 30px rgba(249,115,22,0.45)",
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => scrollTo("projects")}
+                    className="group relative w-full xs:w-auto px-6 sm:px-8 py-3 bg-orange-500 text-black font-bold tracking-widest uppercase text-xs overflow-hidden hover:bg-orange-400 transition-all text-center"
+                    style={{ fontFamily: MONO }}
+                  >
+                    <span className="absolute inset-0 -translate-x-[120%] group-hover:translate-x-[120%] transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 pointer-events-none" />
+                    <span className="relative z-10">View Projects →</span>
+                  </motion.button>
+                </MagneticWrap>
                 <motion.a
                   href="/shiv_prakash_gupta_resume.pdf"
                   download="Shiv_Prakash_Gupta_resume.pdf"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
                   className="px-6 sm:px-8 py-3 border border-orange-500 text-orange-500 font-bold tracking-widest uppercase text-xs hover:bg-orange-500/10 transition-all inline-flex items-center justify-center gap-2"
-                  style={{ fontFamily: "'Courier New', monospace" }}
+                  style={{ fontFamily: MONO }}
                 >
                   ↓ Download CV
                 </motion.a>
@@ -2305,7 +2569,7 @@ export default function DevPortfolio() {
           >
             <span
               className="text-orange-400 text-[11px] font-bold tracking-[0.4em] uppercase"
-              style={{ fontFamily: "'Courier New', monospace" }}
+              style={{ fontFamily: MONO }}
             >
               scroll
             </span>
@@ -2359,13 +2623,13 @@ export default function DevPortfolio() {
                   >
                     <p
                       className="text-orange-500 text-[10px] tracking-widest uppercase mb-2"
-                      style={{ fontFamily: "'Courier New', monospace" }}
+                      style={{ fontFamily: MONO }}
                     >
                       {cat.label}
                     </p>
                     <p
                       className="text-gray-300 text-[11px] leading-relaxed"
-                      style={{ fontFamily: "'Courier New', monospace" }}
+                      style={{ fontFamily: MONO }}
                     >
                       {cat.items}
                     </p>
@@ -2386,7 +2650,7 @@ export default function DevPortfolio() {
               <SectionLabel comment="// credentials" title="Certificates" />
               <p
                 className="text-gray-500 text-xs -mt-8 mb-12 tracking-widest"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 // click any card to verify
               </p>
@@ -2407,7 +2671,7 @@ export default function DevPortfolio() {
               <SectionLabel comment="// work" title="Projects" />
               <p
                 className="text-gray-500 text-xs -mt-8 mb-12 tracking-widest"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 // click any card to view on GitHub
               </p>
@@ -2420,7 +2684,7 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        {/* ── CODING PROFILES ── */}
+        
         <section id="coding" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
@@ -2432,7 +2696,7 @@ export default function DevPortfolio() {
               />
               <p
                 className="text-gray-500 text-xs -mt-8 mb-6 tracking-widest"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 // click any card to visit the profile
               </p>
@@ -2450,7 +2714,7 @@ export default function DevPortfolio() {
                 />
                 <span
                   className="text-orange-500/60 text-xs tracking-wider truncate"
-                  style={{ fontFamily: "'Courier New', monospace" }}
+                  style={{ fontFamily: MONO }}
                 >
                   const profiles = ["LeetCode", "GitHub", "HackerRank",
                   "DataLemur"];
@@ -2469,7 +2733,7 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        {/* ── EDUCATION ── */}
+       
         <section id="education" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="absolute top-1/3 right-0 w-[350px] h-[350px] rounded-full bg-orange-500/10 blur-[90px] pointer-events-none" />
@@ -2481,7 +2745,7 @@ export default function DevPortfolio() {
               />
               <p
                 className="text-gray-500 text-xs -mt-8 mb-12 tracking-widest"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 // my learning journey so far
               </p>
@@ -2576,7 +2840,7 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        {/* ── CONTACT ── */}
+        
         <section id="contact" className="relative py-16 sm:py-24 z-10">
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-orange-500/70 to-transparent" />
           <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] rounded-full bg-orange-500/10 blur-[110px] pointer-events-none" />
@@ -2585,7 +2849,7 @@ export default function DevPortfolio() {
               <SectionLabel comment="// let's connect" title="Contact" />
               <p
                 className="text-gray-500 text-xs -mt-8 mb-12 tracking-widest"
-                style={{ fontFamily: "'Courier New', monospace" }}
+                style={{ fontFamily: MONO }}
               >
                 // drop a message — I'll get back to you
               </p>
@@ -2595,7 +2859,7 @@ export default function DevPortfolio() {
                 <div className="flex flex-col gap-6 h-full">
                   <p
                     className="text-gray-400 text-[13px] leading-relaxed"
-                    style={{ fontFamily: "'Courier New', monospace" }}
+                    style={{ fontFamily: MONO }}
                   >
                     Open to{" "}
                     <span className="text-orange-400 font-semibold">
@@ -2644,7 +2908,7 @@ export default function DevPortfolio() {
                       <div className="min-w-0">
                         <p
                           className="text-orange-500 text-[9px] tracking-[0.3em] uppercase mb-0.5"
-                          style={{ fontFamily: "'Courier New', monospace" }}
+                          style={{ fontFamily: MONO }}
                         >
                           {item.label}
                         </p>
@@ -2654,14 +2918,14 @@ export default function DevPortfolio() {
                             target="_blank"
                             rel="noreferrer"
                             className="text-gray-300 text-[12px] hover:text-orange-400 transition-colors truncate block"
-                            style={{ fontFamily: "'Courier New', monospace" }}
+                            style={{ fontFamily: MONO }}
                           >
                             {item.value}
                           </a>
                         ) : (
                           <p
                             className="text-gray-300 text-[12px] truncate"
-                            style={{ fontFamily: "'Courier New', monospace" }}
+                            style={{ fontFamily: MONO }}
                           >
                             {item.value}
                           </p>
@@ -2683,7 +2947,7 @@ export default function DevPortfolio() {
                     />
                     <span
                       className="text-green-400 text-[11px] font-bold tracking-widest"
-                      style={{ fontFamily: "'Courier New', monospace" }}
+                      style={{ fontFamily: MONO }}
                     >
                       AVAILABLE FOR OPPORTUNITIES
                     </span>
@@ -2697,11 +2961,11 @@ export default function DevPortfolio() {
           </div>
         </section>
 
-        {/* ── FOOTER ── */}
+    
         <footer className="relative z-10 py-8 text-center border-t border-orange-500/10">
           <p
             className="text-orange-400/80 text-[11px] tracking-widest"
-            style={{ fontFamily: "'Courier New', monospace" }}
+            style={{ fontFamily: MONO }}
           >
             ALL COPYRIGHTS © {new Date().getFullYear()} Shiv Prakash Gupta -
             MYDATAAPPLIED.COM - Development Portfolio
