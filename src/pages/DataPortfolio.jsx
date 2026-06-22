@@ -156,6 +156,85 @@ function useTiltRef(max = 7) {
   return { ref, rotateX: springRX, rotateY: springRY, onMouseMove, onMouseLeave };
 }
 
+function useProtection() {
+  useEffect(() => {
+    if (!document.getElementById("mda-protect-toast")) {
+      const toast = document.createElement("div");
+      toast.id = "mda-protect-toast";
+      Object.assign(toast.style, {
+        position: "fixed",
+        bottom: "28px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        background: "rgba(0,0,0,0.92)",
+        border: "1px solid rgba(249,115,22,0.4)",
+        color: "#f97316",
+        padding: "10px 22px",
+        borderRadius: "100px",
+        fontSize: "11px",
+        fontFamily: "'JetBrains Mono','Courier New',monospace",
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        pointerEvents: "none",
+        zIndex: "999999",
+        opacity: "0",
+        transition: "opacity 0.25s ease",
+        backdropFilter: "blur(10px)",
+        whiteSpace: "nowrap",
+        boxShadow: "0 8px 30px rgba(0,0,0,0.6)",
+      });
+      toast.textContent = "🔒 Content is protected";
+      document.body.appendChild(toast);
+    }
+
+    const flashToast = () => {
+      const t = document.getElementById("mda-protect-toast");
+      if (!t) return;
+      t.style.opacity = "1";
+      clearTimeout(t._tid);
+      t._tid = setTimeout(() => { t.style.opacity = "0"; }, 2000);
+    };
+
+    const noCtx = (e) => { e.preventDefault(); flashToast(); };
+
+    const noKeys = (e) => {
+      const key = e.key?.toUpperCase();
+      if (e.key === "F12") { e.preventDefault(); flashToast(); return; }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && ["I","J","C","K"].includes(key)) {
+        e.preventDefault(); flashToast(); return;
+      }
+      if (e.metaKey && e.altKey && ["I","J","C"].includes(key)) {
+        e.preventDefault(); flashToast(); return;
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && key === "U") {
+        e.preventDefault(); flashToast(); return;
+      }
+      if ((e.ctrlKey || e.metaKey) && key === "S") {
+        e.preventDefault(); flashToast(); return;
+      }
+    };
+
+    const noDrag = (e) => e.preventDefault();
+
+    document.addEventListener("contextmenu", noCtx);
+    document.addEventListener("keydown", noKeys);
+    document.addEventListener("dragstart", noDrag);
+
+    if (!document.getElementById("mda-protection-css")) {
+      const s = document.createElement("style");
+      s.id = "mda-protection-css";
+      s.innerHTML = `img, svg { -webkit-user-drag: none; user-drag: none; } a { -webkit-user-drag: none; }`;
+      document.head.appendChild(s);
+    }
+
+    return () => {
+      document.removeEventListener("contextmenu", noCtx);
+      document.removeEventListener("keydown", noKeys);
+      document.removeEventListener("dragstart", noDrag);
+    };
+  }, []);
+}
+
 
 function MagneticWrap({ children, className = "", strength = 0.3 }) {
   const ref = useRef(null);
@@ -1339,6 +1418,7 @@ export default function DataPortfolio() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   usePagePolish();
+  useProtection();
 
 
   
