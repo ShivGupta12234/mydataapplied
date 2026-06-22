@@ -2205,9 +2205,8 @@ export default function DevPortfolio() {
                 className="text-gray-300 text-sm sm:text-base leading-relaxed mb-3 sm:mb-4 max-w-xl"
                 style={{ fontFamily: MONO }}
               >
-                I'm a{" "}
-                <span className="text-orange-400 font-semibold">
-                  Computer Science (Data Science)
+                I'm a
+                <span className="text-orange-400 font-semibold">{" "}Computer Science (Data Science)
                 </span>{" "}
                 undergraduate building practical, data-driven applications at
                 the intersection of development and analytics — using{" "}
